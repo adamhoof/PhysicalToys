@@ -20,7 +20,8 @@ void setup()
 {
     btStop();
 
-    officeCeilLightController.setup();
+    officeCeilLightController.setTogglePin(18);
+    officeCeilLightController.init();
 
     Serial.begin(115200);
 
