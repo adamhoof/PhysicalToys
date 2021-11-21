@@ -2,28 +2,27 @@
 
 ApplianceController::OfficeLampController::OfficeLampController() = default;
 
-void ApplianceController::OfficeLampController::setup()
+void ApplianceController::OfficeLampController::init()
 {
-    irCodeSender.setup();
+    officeLamp.irCodeSender.setup();
 }
 
 String ApplianceController::OfficeLampController::changeMode(String& mode)
 {
-
     if (mode == "w") {
-        irCodeSender.onWhite();
+        officeLamp.onWhite();
     } else if (mode == "y") {
-        irCodeSender.onYellow();
+        officeLamp.onYellow();
     } else if (mode == "g") {
-        irCodeSender.onGreen();
+        officeLamp.onGreen();
     } else if (mode == "b") {
-        irCodeSender.onBlue();
+        officeLamp.onBlue();
     } else if (mode == "r") {
-        irCodeSender.onRed();
+        officeLamp.onRed();
     } else if (mode == "p") {
-        irCodeSender.onPink();
+        officeLamp.onPink();
     } else if (mode == "o") {
-        irCodeSender.off();
+        officeLamp.off();
     }
     return mode;
 }

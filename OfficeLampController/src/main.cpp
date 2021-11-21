@@ -20,7 +20,7 @@ void setup()
 {
     btStop();
 
-    officeLampController.setup();
+    officeLampController.init();
 
     Serial.begin(115200);
 

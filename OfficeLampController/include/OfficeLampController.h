@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRCodeSender.h"
+#include "OfficeLamp.h"
 
 namespace ApplianceController
 {
@@ -10,9 +10,9 @@ namespace ApplianceController
 
         OfficeLampController();
 
-        IRCodeSender irCodeSender {};
+        PhysicalToy::OfficeLamp officeLamp {};
 
-        void setup();
+        void init();
 
         String changeMode(String& mode);
     };
