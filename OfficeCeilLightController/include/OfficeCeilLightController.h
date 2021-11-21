@@ -1,10 +1,6 @@
 #pragma once
 
-#include <Arduino.h>
-
-#define ON "O"
-#define OFF "o"
-#define TOGGLE_PIN 18
+#include "OfficeLamp.h"
 
 namespace PhysicalToyController
 {
@@ -13,7 +9,11 @@ namespace PhysicalToyController
     public:
         OfficeCeilLightController();
 
-        void setup();
+        Toy::OfficeLamp officeLamp{};
+
+        void setTogglePin(uint8_t pin);
+
+        void init() const;
 
         String changeMode(String& mode);
 
