@@ -18,6 +18,8 @@ void messageHandler(String& topic, String& payload)
 
 void setup()
 {
+    btStop();
+
     officeCeilLightController.setup();
 
     Serial.begin(115200);
