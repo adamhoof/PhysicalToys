@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OfficeLamp.h"
+#include "OfficeCeilLight.h"
 
 namespace PhysicalToyController
 {
@@ -9,7 +9,7 @@ namespace PhysicalToyController
     public:
         OfficeCeilLightController();
 
-        Toy::OfficeLamp officeLamp{};
+        PhysicalToy::OfficeCeilLight officeLamp{};
 
         void setTogglePin(uint8_t pin);
 

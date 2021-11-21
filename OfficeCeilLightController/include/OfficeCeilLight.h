@@ -5,13 +5,13 @@
 #define ON "O"
 #define OFF "o"
 
-namespace Toy
+namespace PhysicalToy
 {
-    class OfficeLamp
+    class OfficeCeilLight
     {
 
     public:
-        OfficeLamp();
+        OfficeCeilLight();
 
         uint8_t togglePin{};
 
