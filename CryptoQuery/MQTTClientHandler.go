@@ -1,12 +1,12 @@
 package main
 
 import (
-"crypto/tls"
-"crypto/x509"
-"fmt"
-mqtt "github.com/eclipse/paho.mqtt.golang"
-"io/ioutil"
-"log"
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"io/ioutil"
+	"log"
 )
 
 type MQTTHandler struct {
@@ -15,8 +15,10 @@ type MQTTHandler struct {
 }
 
 const (
-	brokerName = "tls://proteccmqtt.medunka.cz:8883"
-	clientName = "CryptoQuery"
+	brokerName     = "tls://proteccmqtt.medunka.cz:8883"
+	clientName     = "CryptoQuery"
+	cryptoQueryPub = "cryptoquery/toyReply"
+	cryptoQuerySub = "cryptoquery/rpiCommand"
 )
 
 func (mqttHandler *MQTTHandler) SetupClientOptions() {
@@ -55,9 +57,9 @@ func (mqttHandler *MQTTHandler) CreateClient() {
 	mqttHandler.client = mqtt.NewClient(&mqttHandler.clientOptions)
 }
 
-func (mqttHandler *MQTTHandler) SetSubscription(messageProcessor mqtt.MessageHandler, topic string) {
+func (mqttHandler *MQTTHandler) SetSubscription(messageProcessor* mqtt.MessageHandler, topic* string) {
 
-	if token := (mqttHandler.client).Subscribe(topic, 0, messageProcessor); token.Wait() && token.Error() != nil {
+	if token := (mqttHandler.client).Subscribe(*topic, 0, *messageProcessor); token.Wait() && token.Error() != nil {
 		log.Fatalf("failed to create subscription: %v", token.Error())
 	}
 }
@@ -69,10 +71,20 @@ func (mqttHandler *MQTTHandler) ConnectClient() {
 	fmt.Println("mqtt client connected")
 }
 
-func (mqttHandler *MQTTHandler) PublishText(topic string, payload string) {
-
+func (mqttHandler *MQTTHandler) PublishJson(topic string, payload []byte) {
 	if token := (mqttHandler.client).Publish(topic, 0, true, payload); token.Wait() && token.Error() != nil {
 		log.Fatalf("failed to send upd: %v", token.Error())
 	}
 }
 
+func (mqttHandler *MQTTHandler) MQTTProcessor(cryptoQuery *CryptoQuery) (cryptoQueryMqttHandler mqtt.MessageHandler, topic string) {
+
+	cryptoQueryMqttHandler = func(client mqtt.Client, message mqtt.Message) {
+
+		response := cryptoQuery.RequestData(string(message.Payload()))
+		body := cryptoQuery.CreateBody(response)
+		cryptoData := cryptoQuery.FilterUnwanted(body)
+		mqttHandler.PublishJson(cryptoQueryPub, cryptoData)
+	}
+	return cryptoQueryMqttHandler, cryptoQuerySub
+}
