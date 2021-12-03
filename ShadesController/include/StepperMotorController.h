@@ -7,12 +7,10 @@
 
 namespace PhysicalToyController
 {
-
-
     class StepperMotorController
     {
     public:
-        uint16_t stepCount;
+        int32_t stepCount;
     public:
         StepperMotorController();
 

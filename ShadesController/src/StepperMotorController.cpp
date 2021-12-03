@@ -1,10 +1,10 @@
 #include "StepperMotorController.h"
 
-StepperMotorController::StepperMotorController()
+PhysicalToyController::StepperMotorController::StepperMotorController()
         :stepCount(0)
 {}
 
-void StepperMotorController::moveMotor(int direction)
+void PhysicalToyController::StepperMotorController::moveMotor(int direction)
 {
     direction == CLOCKWISE ? stepperMotor.clockwiseStep()
                            : stepperMotor.antiClockwiseStep();

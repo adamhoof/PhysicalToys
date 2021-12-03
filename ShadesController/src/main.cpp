@@ -4,30 +4,38 @@
 #include <OTAHandler.h>
 #include "StepperMotorController.h"
 
-#define ALLOW_PIN 2
-
 MQTTClientHandler mqttClientHandler {};
 WifiConnector wifiConnector {};
 OTAHandler otaHandler {};
 
-PhysicalToyController::StepperMotorController stepperMotorController{};
+PhysicalToyController::StepperMotorController stepperMotorController {};
 
-void setup() {
+void setup()
+{
+    btStop();
 
-    pinMode(ALLOW_PIN, OUTPUT);
+    pinMode(39, INPUT_PULLUP);
 
-    stepperMotorController.stepperMotor.setupPins(16, 17, 18, 19);
+    stepperMotorController.stepperMotor.setupPins(18, 19, 21, 22);
 
     Serial.begin(115200);
+
+    wifiConnector.activateDisconnectHandler();
+    wifiConnector.connect();
+
+
+        for (int i = 0; i < 500; ++i) {
+            stepperMotorController.moveMotor(CLOCKWISE);
+        }
+        for (int i = 0; i < 500; ++i) {
+            stepperMotorController.moveMotor(ANTI_CLOCKWISE);
+        }
+
+    otaHandler.setEvents();
+    otaHandler.init();
 }
 
-void loop() {
-    /*if (!digitalRead(ALLOW_PIN)){
-      return;
-    }*/
-    stepperMotorController.moveMotor(CLOCKWISE);
-    Serial.println(stepperMotorController.stepCount);
-    delay(5000);
-    stepperMotorController.moveMotor(ANTI_CLOCKWISE);
-    Serial.println(stepperMotorController.stepCount);
+void loop()
+{
+    otaHandler.maintainConnection();
 }
