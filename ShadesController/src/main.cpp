@@ -10,6 +10,13 @@ OTAHandler otaHandler {};
 
 PhysicalToyController::StepperMotorController stepperMotorController {};
 
+void messageHandler(String& topic, String& payload)
+{
+    Serial.println("payload");
+    Serial.println(payload);
+    stepperMotorController.posToMoveTo(payload);
+}
+
 void setup()
 {
     btStop();
@@ -23,13 +30,11 @@ void setup()
     wifiConnector.activateDisconnectHandler();
     wifiConnector.connect();
 
-
-        for (int i = 0; i < 500; ++i) {
-            stepperMotorController.moveMotor(CLOCKWISE);
-        }
-        for (int i = 0; i < 500; ++i) {
-            stepperMotorController.moveMotor(ANTI_CLOCKWISE);
-        }
+    mqttClientHandler.setCertificates();
+    mqttClientHandler.start();
+    mqttClientHandler.client.onMessage(messageHandler);
+    mqttClientHandler.connect();
+    mqttClientHandler.setSubscriptions();
 
     otaHandler.setEvents();
     otaHandler.init();
@@ -37,5 +42,18 @@ void setup()
 
 void loop()
 {
-    otaHandler.maintainConnection();
+    if (POS_EQUAL) {
+        otaHandler.maintainConnection();
+        mqttClientHandler.maintainConnection();
+        return;
+    }
+
+    Serial.println(stepperMotorController.getPos());
+    Serial.println(stepperMotorController.getRequiredPos());
+
+    stepperMotorController.getRequiredPos() > stepperMotorController.getPos() ? stepperMotorController.open()
+                                                                              : stepperMotorController.close();
+
+    Serial.println(String(stepperMotorController.getPos()));
+    mqttClientHandler.publish(String(stepperMotorController.getPos()));
 }

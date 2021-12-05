@@ -41,13 +41,13 @@ void MQTTClientHandler::connect()
 
 void MQTTClientHandler::setSubscriptions()
 {
-    client.subscribe(officeLampSub, 0);
+    client.subscribe(BedroomShadesSub, 0);
 }
 
 void MQTTClientHandler::publish(
         const String& mode)
 {
-    client.publish(officeLampPub, mode, true, 0);
+    client.publish(BedroomShadesPub, mode, false, 0);
 }
 
 void MQTTClientHandler::reconnect()
