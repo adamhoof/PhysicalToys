@@ -1,39 +1,65 @@
 #include "StepperMotorController.h"
 
-PhysicalToyController::StepperMotorController::StepperMotorController()
+StepperMotorController::StepperMotorController()
         : pos(0), requiredPos(0)
 {}
 
-void PhysicalToyController::StepperMotorController::posToMoveTo(String& receivedPos)
+void StepperMotorController::setupPins(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4)
 {
-        requiredPos = receivedPos.toInt();
+    stepperMotor.pin1 = in1;
+    stepperMotor.pin2 = in2;
+    stepperMotor.pin3 = in3;
+    stepperMotor.pin4 = in4;
+
+    pinMode(stepperMotor.pin1, OUTPUT);
+    pinMode(stepperMotor.pin2, OUTPUT);
+    pinMode(stepperMotor.pin3, OUTPUT);
+    pinMode(stepperMotor.pin4, OUTPUT);
 }
 
-uint8_t PhysicalToyController::StepperMotorController::getPos()
+void StepperMotorController::calibrate()
+{
+    while (digitalRead(32)) {
+        stepperMotor.clockwiseStep();
+    }
+    uint8_t i;
+
+    for (i = 0; i < 100; ++i) {
+        stepperMotor.antiClockwiseStep();
+    }
+    for (i = 0; i < 100; ++i) {
+        stepperMotor.clockwiseStep();
+    }
+    for (i = 0; i < 100; ++i) {
+        stepperMotor.antiClockwiseStep();
+    }
+    pos = 0;
+}
+
+void StepperMotorController::posToMoveTo(String& receivedPos)
+{
+    requiredPos = receivedPos.toInt();
+}
+
+uint8_t StepperMotorController::getPos()
 {
     return pos;
 }
 
-uint8_t PhysicalToyController::StepperMotorController::getRequiredPos()
+uint8_t StepperMotorController::getRequiredPos()
 {
     return requiredPos;
 }
 
-void PhysicalToyController::StepperMotorController::open()
+void StepperMotorController::open()
 {
-    for (int i = 0; i < 500; ++i) {
-        stepperMotor.clockwiseStep();
+    for (uint32_t i = 0; i < 11000; ++i) {
+        stepperMotor.antiClockwiseStep();
     }
     pos = 1;
 }
 
-void PhysicalToyController::StepperMotorController::close()
+void StepperMotorController::close()
 {
-    while (digitalRead(32)) {
-        stepperMotor.antiClockwiseStep();
-    }
-    for (int i = 0; i < 100; ++i) {
-        stepperMotor.clockwiseStep();
-    }
-    pos = 0;
+    calibrate();
 }

@@ -2,31 +2,29 @@
 
 #include "StepperMotor.h"
 
-#define CLOCKWISE -1
-#define ANTI_CLOCKWISE 1
 #define POS_EQUAL stepperMotorController.getRequiredPos() == stepperMotorController.getPos()
-#define POS_NOT_EQUAL stepperMotorController.getRequiredPos() != stepperMotorController.getPos()
 
-namespace PhysicalToyController
+class StepperMotorController
 {
-    class StepperMotorController
-    {
-    public:
-        uint8_t pos;
-        uint8_t requiredPos;
-    public:
-        StepperMotorController();
+public:
+    uint8_t pos;
+    uint8_t requiredPos;
+public:
+    StepperMotorController();
 
-        StepperMotor stepperMotor {};
+    StepperMotor stepperMotor {};
 
-        uint8_t getPos();
+    void setupPins(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4);
 
-        uint8_t getRequiredPos();
+    void calibrate();
 
-        void posToMoveTo(String& receivedPos);
+    uint8_t getPos();
 
-        void open();
+    uint8_t getRequiredPos();
 
-        void close();
-    };
-}
+    void posToMoveTo(String& receivedPos);
+
+    void open();
+
+    void close();
+};

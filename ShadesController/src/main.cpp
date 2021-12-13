@@ -2,18 +2,18 @@
 #include <MQTTClientHandler.h>
 #include <WifiConnector.h>
 #include <OTAHandler.h>
+#include "ShadesController.h"
 #include "StepperMotorController.h"
 
 MQTTClientHandler mqttClientHandler {};
 WifiConnector wifiConnector {};
 OTAHandler otaHandler {};
 
-PhysicalToyController::StepperMotorController stepperMotorController {};
+PhysicalToyController::ShadesController shadesController{};
+StepperMotorController stepperMotorController {};
 
 void messageHandler(String& topic, String& payload)
 {
-    Serial.println("payload");
-    Serial.println(payload);
     stepperMotorController.posToMoveTo(payload);
 }
 
@@ -23,9 +23,9 @@ void setup()
 
     pinMode(32, INPUT_PULLUP);
 
-    stepperMotorController.stepperMotor.setupPins(18, 19, 21, 22);
+    stepperMotorController.setupPins(18, 19, 21, 22);
 
-    Serial.begin(115200);
+    stepperMotorController.calibrate();
 
     wifiConnector.activateDisconnectHandler();
     wifiConnector.connect();
@@ -48,8 +48,8 @@ void loop()
         return;
     }
 
-    stepperMotorController.getRequiredPos() > stepperMotorController.getPos() ? stepperMotorController.open()
-                                                                              : stepperMotorController.close();
+    stepperMotorController.getRequiredPos() > stepperMotorController.getPos() ? shadesController.open(mqttClientHandler, stepperMotorController)
+                                                                              : shadesController.close(mqttClientHandler, stepperMotorController);
 
     mqttClientHandler.publish(String(stepperMotorController.getPos()));
 }

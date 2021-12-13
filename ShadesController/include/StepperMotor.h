@@ -13,8 +13,6 @@ public:
 public:
     StepperMotor();
 
-    void setupPins(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4);
-
     void clockwiseStep();
 
     void antiClockwiseStep();
