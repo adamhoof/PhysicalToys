@@ -1,0 +1,6 @@
+.idea
+.pio
+CMakeListsPrivate.txt
+CMakeLists.txt
+include/certs.h
+cmake-build-*/ 
