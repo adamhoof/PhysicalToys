@@ -8,11 +8,15 @@ void PhysicalToyController::ShadesController::open(MQTTClientHandler& mqttClient
     mqttClientHandler.publish("Set: open");
     mqttClientHandler.disconnect();
 
-    while (digitalRead(32)) {
+    for (uint16_t i = 0; i < 10000; ++i) {
         motorController.stepperMotor.antiClockwiseStep();
     }
 
-    motorController.setCurrPos(1);
+    motorController.setCurrPos(OPEN);
+
+    if (WiFiClass::status() == WL_DISCONNECTED) {
+        WiFi.reconnect();
+    }
 
     mqttClientHandler.reconnect();
 }
@@ -26,9 +30,13 @@ void PhysicalToyController::ShadesController::close(MQTTClientHandler& mqttClien
     while (digitalRead(32)) {
         motorController.stepperMotor.clockwiseStep();
     }
+    motorController.leaveSwitchAlone();
 
-    motorController.setCurrPos(0);
+    motorController.setCurrPos(CLOSE);
 
+    if (WiFiClass::status() == WL_DISCONNECTED) {
+        WiFi.reconnect();
+    }
 
     mqttClientHandler.reconnect();
 }

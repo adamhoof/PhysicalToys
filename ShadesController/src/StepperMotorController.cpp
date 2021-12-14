@@ -36,3 +36,10 @@ uint8_t StepperMotorController::getReqPos()
 {
     return reqPos;
 }
+
+void StepperMotorController::leaveSwitchAlone()
+{
+    for (int i = 0; i < 100; ++i) {
+        stepperMotor.antiClockwiseStep();
+    }
+}

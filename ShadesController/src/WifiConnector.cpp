@@ -21,7 +21,6 @@ void WifiConnector::connect()
 
 void onWifiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 {
-    ESP.restart();
 }
 
 void WifiConnector::activateDisconnectHandler()

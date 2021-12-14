@@ -3,6 +3,9 @@
 #include "StepperMotorController.h"
 #include "MQTTClientHandler.h"
 
+#define OPEN 1
+#define CLOSE 0
+
 namespace PhysicalToyController
 {
     class ShadesController
@@ -10,8 +13,8 @@ namespace PhysicalToyController
     public:
         ShadesController();
 
-        void open(MQTTClientHandler &mqttClientHandler, StepperMotorController &motorController);
+        static void open(MQTTClientHandler& mqttClientHandler, StepperMotorController& motorController);
 
-        void close(MQTTClientHandler &mqttClientHandler, StepperMotorController &motorController);
+        static void close(MQTTClientHandler& mqttClientHandler, StepperMotorController& motorController);
     };
 }

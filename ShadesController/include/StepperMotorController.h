@@ -24,4 +24,6 @@ public:
     uint8_t getReqPos();
 
     void setReqPosFromString(String& receivedPos);
+
+    void leaveSwitchAlone();
 };
