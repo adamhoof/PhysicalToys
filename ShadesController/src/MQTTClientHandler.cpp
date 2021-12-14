@@ -62,3 +62,8 @@ void MQTTClientHandler::maintainConnection()
         reconnect();
     }
 }
+
+void MQTTClientHandler::disconnect()
+{
+    client.disconnect();
+}

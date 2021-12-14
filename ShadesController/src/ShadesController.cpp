@@ -5,16 +5,30 @@ PhysicalToyController::ShadesController::ShadesController() = default;
 void PhysicalToyController::ShadesController::open(MQTTClientHandler& mqttClientHandler,
                                                    StepperMotorController& motorController)
 {
-    for (uint16_t i = 0; i < 30; ++i) {
-        for (int j = 0; j < 500; ++j) {
-            motorController.stepperMotor.antiClockwiseStep();
-        }
-        mqttClientHandler.maintainConnection();
+    mqttClientHandler.publish("Set: open");
+    mqttClientHandler.disconnect();
+
+    while (digitalRead(32)) {
+        motorController.stepperMotor.antiClockwiseStep();
     }
+
+    motorController.setCurrPos(1);
+
+    mqttClientHandler.reconnect();
 }
 
 void PhysicalToyController::ShadesController::close(MQTTClientHandler& mqttClientHandler,
                                                     StepperMotorController& motorController)
 {
-    motorController.calibrate();
+    mqttClientHandler.publish("Set: close");
+    mqttClientHandler.disconnect();
+
+    while (digitalRead(32)) {
+        motorController.stepperMotor.clockwiseStep();
+    }
+
+    motorController.setCurrPos(0);
+
+
+    mqttClientHandler.reconnect();
 }

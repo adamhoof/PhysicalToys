@@ -1,7 +1,7 @@
 #include "StepperMotorController.h"
 
 StepperMotorController::StepperMotorController()
-        : pos(0), requiredPos(0)
+        : currPos(0), reqPos(0)
 {}
 
 void StepperMotorController::setupPins(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4)
@@ -17,49 +17,22 @@ void StepperMotorController::setupPins(uint8_t in1, uint8_t in2, uint8_t in3, ui
     pinMode(stepperMotor.pin4, OUTPUT);
 }
 
-void StepperMotorController::calibrate()
+void StepperMotorController::setReqPosFromString(String& receivedPos)
 {
-    while (digitalRead(32)) {
-        stepperMotor.clockwiseStep();
-    }
-    uint8_t i;
-
-    for (i = 0; i < 100; ++i) {
-        stepperMotor.antiClockwiseStep();
-    }
-    for (i = 0; i < 100; ++i) {
-        stepperMotor.clockwiseStep();
-    }
-    for (i = 0; i < 100; ++i) {
-        stepperMotor.antiClockwiseStep();
-    }
-    pos = 0;
+    reqPos = receivedPos.toInt();
 }
 
-void StepperMotorController::posToMoveTo(String& receivedPos)
+uint8_t StepperMotorController::getCurrPos()
 {
-    requiredPos = receivedPos.toInt();
+    return currPos;
 }
 
-uint8_t StepperMotorController::getPos()
+void StepperMotorController::setCurrPos(uint8_t pos)
 {
-    return pos;
+    currPos = pos;
 }
 
-uint8_t StepperMotorController::getRequiredPos()
+uint8_t StepperMotorController::getReqPos()
 {
-    return requiredPos;
-}
-
-void StepperMotorController::open()
-{
-    for (uint32_t i = 0; i < 11000; ++i) {
-        stepperMotor.antiClockwiseStep();
-    }
-    pos = 1;
-}
-
-void StepperMotorController::close()
-{
-    calibrate();
+    return reqPos;
 }
