@@ -1,7 +1,8 @@
 #pragma once
 
-#include "StepperMotorController.h"
+#include "WifiConnector.h"
 #include "MQTTClientHandler.h"
+#include "StepperMotorController.h"
 
 #define OPEN 1
 #define CLOSE 0
@@ -13,8 +14,8 @@ namespace PhysicalToyController
     public:
         ShadesController();
 
-        static void open(MQTTClientHandler& mqttClientHandler, StepperMotorController& motorController);
+        void open(StepperMotorController& motorController);
 
-        static void close(MQTTClientHandler& mqttClientHandler, StepperMotorController& motorController);
+        void close(StepperMotorController& motorController);
     };
 }

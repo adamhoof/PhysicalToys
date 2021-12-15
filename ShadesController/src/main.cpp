@@ -10,6 +10,7 @@ WifiConnector wifiConnector {};
 OTAHandler otaHandler {};
 
 StepperMotorController stepperMotorController {};
+PhysicalToyController::ShadesController shadesController {};
 
 void messageHandler(String& topic, String& payload)
 {
@@ -23,8 +24,10 @@ void setup()
     pinMode(32, INPUT_PULLUP);
 
     stepperMotorController.setupPins(18, 19, 21, 22);
+    stepperMotorController.setDelayBetweenSteps(3);
 
-    /*wifiConnector.activateDisconnectHandler();*/
+    shadesController.close(stepperMotorController);
+
     wifiConnector.connect();
 
     mqttClientHandler.setCertificates();
@@ -35,24 +38,32 @@ void setup()
 
     otaHandler.setEvents();
     otaHandler.init();
-
-    PhysicalToyController::ShadesController::close(mqttClientHandler, stepperMotorController);
 }
 
 void loop()
 {
+    if (!WiFi.isConnected()) {
+        wifiConnector.disconnect();
+        wifiConnector.connect();
+    }
+
     if (POSITIONS_EQUAL) {
         otaHandler.maintainConnection();
         mqttClientHandler.maintainConnection();
         return;
     }
 
-    REQ_POS_GREATER ? PhysicalToyController::ShadesController::open(mqttClientHandler, stepperMotorController)
-                    : PhysicalToyController::ShadesController::close(mqttClientHandler, stepperMotorController);
+    mqttClientHandler.publish("Set: " + String(stepperMotorController.getReqPos()));
+    delay(20);
+    mqttClientHandler.disconnect();
+    delay(20);
+    wifiConnector.disconnect();
 
-    if (WiFiClass::status() == WL_DISCONNECTED) {
-        WiFi.disconnect();
-        wifiConnector.connect();
-    }
+    REQ_POS_GREATER ? shadesController.open(stepperMotorController)
+                    : shadesController.close(stepperMotorController);
+
+    wifiConnector.connect();
+    mqttClientHandler.reconnect();
+
     mqttClientHandler.publish("Done");
 }

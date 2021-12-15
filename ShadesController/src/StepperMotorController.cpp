@@ -43,3 +43,8 @@ void StepperMotorController::leaveSwitchAlone()
         stepperMotor.antiClockwiseStep();
     }
 }
+
+void StepperMotorController::setDelayBetweenSteps(uint8_t stepDelay)
+{
+    stepperMotor.delayBetweenSteps = stepDelay;
+}
