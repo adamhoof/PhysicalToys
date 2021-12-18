@@ -53,10 +53,10 @@ void loop()
         return;
     }
 
-    String reqPos {};
-    stepperMotorController.getReqPos() == OPEN ? reqPos = "open" : reqPos = "close";
+    String status {};
+    stepperMotorController.getReqPos() == OPEN ? status = "opening" : status = "closing";
 
-    mqttClientHandler.publish("Set: " + reqPos);
+    mqttClientHandler.publish("BedroomShades: " + status);
     delay(20);
     mqttClientHandler.disconnect();
     delay(20);
@@ -68,5 +68,5 @@ void loop()
     wifiConnector.connect();
     mqttClientHandler.reconnect();
 
-    mqttClientHandler.publish("Done");
+    mqttClientHandler.publish("BedroomShades: done");
 }
