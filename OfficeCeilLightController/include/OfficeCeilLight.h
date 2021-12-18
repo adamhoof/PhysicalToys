@@ -5,7 +5,7 @@
 #define ON "O"
 #define OFF "o"
 
-namespace PhysicalToy
+namespace Toy
 {
     class OfficeCeilLight
     {

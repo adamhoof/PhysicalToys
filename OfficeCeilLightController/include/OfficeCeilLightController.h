@@ -9,7 +9,7 @@ namespace PhysicalToyController
     public:
         OfficeCeilLightController();
 
-        PhysicalToy::OfficeCeilLight officeLamp{};
+        Toy::OfficeCeilLight officeLamp{};
 
         void setTogglePin(uint8_t pin);
 

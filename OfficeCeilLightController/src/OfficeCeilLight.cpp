@@ -1,13 +1,13 @@
 #include "OfficeCeilLight.h"
 
-PhysicalToy::OfficeCeilLight::OfficeCeilLight() = default;
+Toy::OfficeCeilLight::OfficeCeilLight() = default;
 
-void PhysicalToy::OfficeCeilLight::on()
+void Toy::OfficeCeilLight::on()
 {
     digitalWrite(togglePin, LOW);
 }
 
-void PhysicalToy::OfficeCeilLight::off()
+void Toy::OfficeCeilLight::off()
 {
     digitalWrite(togglePin, HIGH);
 }
