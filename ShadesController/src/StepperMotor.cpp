@@ -38,23 +38,23 @@ void StepperMotor::pin4QuarterStep()
 void StepperMotor::clockwiseStep()
 {
     pin1QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
     pin2QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
     pin3QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
     pin4QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
 }
 
 void StepperMotor::antiClockwiseStep()
 {
     pin4QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
     pin3QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
     pin2QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
     pin1QuarterStep();
-    delay(motorDelay);
+    delay(delayBetweenSteps);
 }

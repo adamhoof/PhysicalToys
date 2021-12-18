@@ -35,4 +35,6 @@ public:
     void reconnect();
 
     void maintainConnection();
+
+    void disconnect();
 };

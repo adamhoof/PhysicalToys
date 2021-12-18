@@ -11,12 +11,7 @@ void WifiConnector::connect()
     WiFiClass::mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-    Serial.println("Connecting to Wi-Fi");
-
     WiFi.waitForConnectResult();
-
-    Serial.println("Wifi connected");
-    Serial.println(WiFi.localIP());
 }
 
 void onWifiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)

@@ -5,7 +5,7 @@
 class StepperMotor
 {
 public:
-    const uint8_t motorDelay = 3;
+    uint8_t delayBetweenSteps = 3;
     uint8_t pin1{};
     uint8_t pin2{};
     uint8_t pin3{};
