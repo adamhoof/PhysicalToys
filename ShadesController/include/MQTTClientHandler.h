@@ -30,7 +30,7 @@ public:
 
     void setSubscriptions();
 
-    void publish(const String& mode);
+    void publish(const String& payload);
 
     void reconnect();
 

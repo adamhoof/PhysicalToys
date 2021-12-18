@@ -44,10 +44,9 @@ void MQTTClientHandler::setSubscriptions()
     client.subscribe(BedroomShadesSub, 0);
 }
 
-void MQTTClientHandler::publish(
-        const String& mode)
+void MQTTClientHandler::publish(const String& payload)
 {
-    client.publish(BedroomShadesPub, mode, false, 0);
+    client.publish(BedroomShadesPub, payload, true, 0);
 }
 
 void MQTTClientHandler::reconnect()
