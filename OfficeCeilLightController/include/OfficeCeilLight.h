@@ -2,8 +2,8 @@
 
 #include <Arduino.h>
 
-#define ON "O"
-#define OFF "o"
+#define ON "on"
+#define OFF "off"
 
 namespace Toy
 {
