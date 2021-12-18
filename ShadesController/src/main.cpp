@@ -53,7 +53,10 @@ void loop()
         return;
     }
 
-    mqttClientHandler.publish("Set: " + String(stepperMotorController.getReqPos()));
+    String reqPos {};
+    stepperMotorController.getReqPos() == OPEN ? reqPos = "open" : reqPos = "close";
+
+    mqttClientHandler.publish("Set: " + reqPos);
     delay(20);
     mqttClientHandler.disconnect();
     delay(20);
