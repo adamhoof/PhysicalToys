@@ -43,7 +43,6 @@ func (cryptoQuery *CryptoQuery) FilterUnwanted(body []byte) []byte {
 	filteredData["pc_change_perc_24h"] = queryResultMap[0]["price_change_percentage_24h"]
 	filteredData["pc_change_perc_7d"] = queryResultMap[0]["price_change_percentage_7d_in_currency"]
 	filteredData["pc_change_perc_14d"] = queryResultMap[0]["price_change_percentage_14d_in_currency"]
-	/*filteredData["image"] = queryResultMap[0]["image"]*/
 
 	filteredDataJson, err := json.Marshal(filteredData)
 	return filteredDataJson

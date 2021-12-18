@@ -57,7 +57,7 @@ func (mqttHandler *MQTTHandler) CreateClient() {
 	mqttHandler.client = mqtt.NewClient(&mqttHandler.clientOptions)
 }
 
-func (mqttHandler *MQTTHandler) SetSubscription(messageProcessor* mqtt.MessageHandler, topic* string) {
+func (mqttHandler *MQTTHandler) SetSubscription(messageProcessor *mqtt.MessageHandler, topic *string) {
 
 	if token := (mqttHandler.client).Subscribe(*topic, 0, *messageProcessor); token.Wait() && token.Error() != nil {
 		log.Fatalf("failed to create subscription: %v", token.Error())
@@ -77,14 +77,14 @@ func (mqttHandler *MQTTHandler) PublishJson(topic string, payload []byte) {
 	}
 }
 
-func (mqttHandler *MQTTHandler) MQTTProcessor(cryptoQuery *CryptoQuery) (cryptoQueryMqttHandler mqtt.MessageHandler, topic string) {
+func (mqttHandler *MQTTHandler) MQTTHandler(cryptoQuery *CryptoQuery) (handler mqtt.MessageHandler, topic string) {
 
-	cryptoQueryMqttHandler = func(client mqtt.Client, message mqtt.Message) {
+	handler = func(client mqtt.Client, message mqtt.Message) {
 
 		response := cryptoQuery.RequestData(string(message.Payload()))
 		body := cryptoQuery.CreateBody(response)
 		cryptoData := cryptoQuery.FilterUnwanted(body)
 		mqttHandler.PublishJson(cryptoQueryPub, cryptoData)
 	}
-	return cryptoQueryMqttHandler, cryptoQuerySub
+	return handler, cryptoQuerySub
 }

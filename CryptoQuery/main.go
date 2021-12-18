@@ -7,10 +7,8 @@ func main() {
 	mqttHandler.SetupClientOptions()
 	mqttHandler.CreateClient()
 	mqttHandler.ConnectClient()
-	processor, topic := mqttHandler.MQTTProcessor(&cryptoQuery)
+	processor, topic := mqttHandler.MQTTHandler(&cryptoQuery)
 	mqttHandler.SetSubscription(&processor, &topic)
 
-	select {
-
-	}
+	select {}
 }
