@@ -2,13 +2,14 @@
 
 #include "StepperMotor.h"
 
-#define POS_EQUAL stepperMotorController.getRequiredPos() == stepperMotorController.getPos()
+#define POSITIONS_EQUAL stepperMotorController.getReqPos() == stepperMotorController.getCurrPos()
+#define REQ_POS_GREATER stepperMotorController.getReqPos() > stepperMotorController.getCurrPos()
 
 class StepperMotorController
 {
 public:
-    uint8_t pos;
-    uint8_t requiredPos;
+    uint8_t currPos;
+    uint8_t reqPos;
 public:
     StepperMotorController();
 
@@ -16,15 +17,15 @@ public:
 
     void setupPins(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4);
 
-    void calibrate();
+    void setDelayBetweenSteps(uint8_t stepDelay);
 
-    uint8_t getPos();
+    uint8_t getCurrPos();
 
-    uint8_t getRequiredPos();
+    void setCurrPos(uint8_t pos);
 
-    void posToMoveTo(String& receivedPos);
+    uint8_t getReqPos();
 
-    void open();
+    void setReqPosFromString(String& receivedPos);
 
-    void close();
+    void leaveSwitchAlone();
 };

@@ -32,11 +32,7 @@ void MQTTClientHandler::start()
 
 void MQTTClientHandler::connect()
 {
-    Serial.println("Connecting to server");
-
     while (!client.connect(clientID)) {}
-
-    Serial.println("Server connection established");
 }
 
 void MQTTClientHandler::setSubscriptions()

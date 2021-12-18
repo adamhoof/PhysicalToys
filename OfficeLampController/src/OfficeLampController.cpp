@@ -9,19 +9,19 @@ void ApplianceController::OfficeLampController::init()
 
 String ApplianceController::OfficeLampController::changeMode(String& mode)
 {
-    if (mode == "w") {
+    if (mode == "white") {
         officeLamp.onWhite();
-    } else if (mode == "y") {
+    } else if (mode == "yellow") {
         officeLamp.onYellow();
-    } else if (mode == "g") {
+    } else if (mode == "green") {
         officeLamp.onGreen();
-    } else if (mode == "b") {
+    } else if (mode == "blue") {
         officeLamp.onBlue();
-    } else if (mode == "r") {
+    } else if (mode == "red") {
         officeLamp.onRed();
-    } else if (mode == "p") {
+    } else if (mode == "pink") {
         officeLamp.onPink();
-    } else if (mode == "o") {
+    } else if (mode == "off") {
         officeLamp.off();
     }
     return mode;

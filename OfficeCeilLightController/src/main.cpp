@@ -23,8 +23,6 @@ void setup()
     officeCeilLightController.setTogglePin(18);
     officeCeilLightController.init();
 
-    Serial.begin(115200);
-
     wifiConnector.activateDisconnectHandler();
     wifiConnector.connect();
 
