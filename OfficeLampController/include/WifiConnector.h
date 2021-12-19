@@ -17,5 +17,5 @@ public:
 
     void connect();
 
-    void activateDisconnectHandler();
+    void disconnect();
 };

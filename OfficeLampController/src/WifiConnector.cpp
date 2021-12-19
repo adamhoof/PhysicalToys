@@ -19,12 +19,7 @@ void WifiConnector::connect()
     Serial.println(WiFi.localIP());
 }
 
-void onWifiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
+void WifiConnector::disconnect()
 {
-    ESP.restart();
-}
-
-void WifiConnector::activateDisconnectHandler()
-{
-    WiFi.onEvent(onWifiDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
+    WiFi.disconnect();
 }

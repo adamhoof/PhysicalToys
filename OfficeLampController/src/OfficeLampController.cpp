@@ -1,6 +1,9 @@
 #include "OfficeLampController.h"
 
-ApplianceController::OfficeLampController::OfficeLampController() = default;
+ApplianceController::OfficeLampController::OfficeLampController() :
+        currentMode {""},
+        currentModePtr {&currentMode}
+{}
 
 void ApplianceController::OfficeLampController::init()
 {
@@ -24,5 +27,6 @@ String ApplianceController::OfficeLampController::changeMode(String& mode)
     } else if (mode == "off") {
         officeLamp.off();
     }
+    *currentModePtr = mode;
     return mode;
 }

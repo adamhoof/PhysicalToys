@@ -7,6 +7,8 @@ namespace ApplianceController
     class OfficeLampController
     {
     public:
+        String currentMode;
+        String* currentModePtr;
 
         OfficeLampController();
 

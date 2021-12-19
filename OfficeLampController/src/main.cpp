@@ -12,6 +12,9 @@ ApplianceController::OfficeLampController officeLampController {};
 
 void messageHandler(String& topic, String& payload)
 {
+    if (payload == *officeLampController.currentModePtr){
+        return;
+    }
     String mode = officeLampController.changeMode(payload);
     mqttClientHandler.publish(mode);
 }
@@ -24,7 +27,6 @@ void setup()
 
     Serial.begin(115200);
 
-    wifiConnector.activateDisconnectHandler();
     wifiConnector.connect();
 
     mqttClientHandler.setCertificates();
@@ -39,6 +41,10 @@ void setup()
 
 void loop()
 {
+    if (!WiFi.isConnected()) {
+        wifiConnector.disconnect();
+        wifiConnector.connect();
+    }
     otaHandler.maintainConnection();
     mqttClientHandler.maintainConnection();
 }
