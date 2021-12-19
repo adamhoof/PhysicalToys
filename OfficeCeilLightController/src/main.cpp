@@ -12,6 +12,9 @@ PhysicalToyController::OfficeCeilLightController officeCeilLightController {};
 
 void messageHandler(String& topic, String& payload)
 {
+    if (payload == *officeCeilLightController.currentModePtr){
+        return;
+    }
     String mode = officeCeilLightController.changeMode(payload);
     mqttClientHandler.publish(mode);
 }
@@ -23,7 +26,6 @@ void setup()
     officeCeilLightController.setTogglePin(18);
     officeCeilLightController.init();
 
-    wifiConnector.activateDisconnectHandler();
     wifiConnector.connect();
 
     mqttClientHandler.setCertificates();
@@ -38,6 +40,10 @@ void setup()
 
 void loop()
 {
+    if (!WiFi.isConnected()) {
+        wifiConnector.disconnect();
+        wifiConnector.connect();
+    }
     otaHandler.maintainConnection();
     mqttClientHandler.maintainConnection();
 }

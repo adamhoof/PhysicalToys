@@ -1,6 +1,9 @@
 #include "OfficeCeilLightController.h"
 
-PhysicalToyController::OfficeCeilLightController::OfficeCeilLightController() = default;
+PhysicalToyController::OfficeCeilLightController::OfficeCeilLightController() :
+        currentMode {""},
+        currentModePtr {&currentMode}
+{};
 
 void PhysicalToyController::OfficeCeilLightController::setTogglePin(uint8_t pin)
 {
@@ -15,5 +18,6 @@ void PhysicalToyController::OfficeCeilLightController::init() const
 String PhysicalToyController::OfficeCeilLightController::changeMode(String& mode)
 {
     mode == ON ? officeLamp.on() : officeLamp.off();
+    *currentModePtr = mode;
     return mode;
 }
