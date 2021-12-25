@@ -3,7 +3,7 @@
 ApplianceController::LampController::LampController() :
         currentMode {""},
         currentModePtr {&currentMode},
-        ledPin(19),
+        ledPin(32),
         numberOfLeds(7)
 {}
 
