@@ -4,11 +4,12 @@ WifiConnector::WifiConnector() = default;
 
 void WifiConnector::connect()
 {
-    if (!WiFi.config(staticIP, gateway, subnet, dns, dns)) {
-        Serial.println("Wifi config failed :(");
-    }
-
     WiFiClass::mode(WIFI_STA);
+
+    String wifiHostname = "OfficeCeilLight";
+    WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
+    WiFi.setHostname(wifiHostname.c_str());
+
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
     WiFi.waitForConnectResult();
