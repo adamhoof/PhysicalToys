@@ -23,7 +23,7 @@ void messageHandler(String& topic, String& payload)
 void setup()
 {
     lampController.init();
-    lampController.setBrightness(80);
+    lampController.setBrightness(150);
 
      btStop();
 

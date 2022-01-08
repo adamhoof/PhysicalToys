@@ -4,7 +4,7 @@ ApplianceController::LampController::LampController() :
         currentMode {""},
         currentModePtr {&currentMode},
         ledPin(32),
-        numberOfLeds(7)
+        numberOfLeds(8)
 {}
 
 void ApplianceController::LampController::setBrightness(uint8_t brightness)
