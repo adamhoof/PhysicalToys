@@ -10,9 +10,9 @@
 class MQTTClientHandler
 {
 private:
-    const char* BedroomShadesPub {"bedroomshades/espReply"};
-    const char* BedroomShadesSub {"bedroomshades/rpiSet"};
-    const char* clientID {"Bedroom_shades_controller"};
+    const char* BedroomShadesPub {"reply/bedroomshades"};
+    const char* BedroomShadesSub {"set/bedroomshades"};
+    const char* clientID {"bedroom_shades_controller"};
 public:
     MQTTClientHandler();
 

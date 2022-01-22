@@ -10,9 +10,9 @@
 class MQTTClientHandler
 {
 private:
-    const char* officeLampPub {"officelamp/espReply"};
-    const char* officeLampSub {"officelamp/rpiSet"};
-    const char* clientID {"Office_lamp_controller"};
+    const char* officeLampPub {"reply/officelamp"};
+    const char* officeLampSub {"set/officelamp"};
+    const char* clientID {"office_lamp_controller"};
 public:
     MQTTClientHandler();
 
