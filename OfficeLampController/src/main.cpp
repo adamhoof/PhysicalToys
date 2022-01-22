@@ -47,4 +47,5 @@ void loop()
     }
     otaHandler.maintainConnection();
     mqttClientHandler.maintainConnection();
+    delay(12); //the guy here talking bout keepalive: https://esp32.com/viewtopic.php?t=3851
 }
