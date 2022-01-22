@@ -10,9 +10,9 @@
 class MQTTClientHandler
 {
 private:
-    const char* bedroomLampPub {"bedroomlamp/espReply"};
-    const char* bedroomLampSub {"bedroomlamp/rpiSet"};
-    const char* clientID {"Bedroom_lamp_controller"};
+    const char* bedroomLampPub {"reply/bedroomlamp"};
+    const char* bedroomLampSub {"set/bedroomlamp"};
+    const char* clientID {"bedroom_lamp_controller"};
 public:
     MQTTClientHandler();
 
