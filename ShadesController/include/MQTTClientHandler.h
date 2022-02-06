@@ -20,6 +20,8 @@ public:
 
     WiFiClientSecure wifiClientSecure {};
 
+    bool isFirstMessageAfterBoot{true};
+
     void setTimeForCertValidation();
 
     void setCertificates();

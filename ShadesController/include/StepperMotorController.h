@@ -3,7 +3,7 @@
 #include "StepperMotor.h"
 
 #define POSITIONS_EQUAL stepperMotorController.getReqPos() == stepperMotorController.getCurrPos()
-#define REQ_POS_GREATER stepperMotorController.getReqPos() > stepperMotorController.getCurrPos()
+#define REQ_POS_GREATER_THAN_CURR stepperMotorController.getReqPos() > stepperMotorController.getCurrPos()
 
 class StepperMotorController
 {
@@ -23,9 +23,13 @@ public:
 
     void setCurrPos(uint8_t pos);
 
+    void setReqPos(uint8_t pos);
+
     uint8_t getReqPos();
 
     void setReqPosFromString(String& receivedPos);
+
+    void setCurrPosFromString(String& receivedPos);
 
     void leaveSwitchAlone();
 };

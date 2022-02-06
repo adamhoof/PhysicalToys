@@ -1,8 +1,8 @@
-#include "WifiConnector.h"
+#include "WifiClientHandler.h"
 
-WifiConnector::WifiConnector() = default;
+WifiClientHandler::WifiClientHandler() = default;
 
-void WifiConnector::connect()
+void WifiClientHandler::connect()
 {
     WiFiClass::mode(WIFI_STA);
 
@@ -12,15 +12,17 @@ void WifiConnector::connect()
 
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-    Serial.println("Connecting to Wi-Fi");
-
     WiFi.waitForConnectResult();
-
-    Serial.println("Wifi connected");
-    Serial.println(WiFi.localIP());
 }
 
-void WifiConnector::disconnect()
+void WifiClientHandler::maintainConnection()
+{
+    if (!WiFi.isConnected()) {
+        ESP.restart();
+    }
+}
+
+void WifiClientHandler::disconnect()
 {
     WiFi.disconnect();
 }

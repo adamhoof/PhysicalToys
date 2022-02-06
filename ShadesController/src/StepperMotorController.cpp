@@ -22,6 +22,11 @@ void StepperMotorController::setReqPosFromString(String& receivedPos)
     reqPos = receivedPos.toInt();
 }
 
+void StepperMotorController::setCurrPosFromString(String& receivedPos)
+{
+    currPos = receivedPos.toInt();
+}
+
 uint8_t StepperMotorController::getCurrPos()
 {
     return currPos;
@@ -30,6 +35,10 @@ uint8_t StepperMotorController::getCurrPos()
 void StepperMotorController::setCurrPos(uint8_t pos)
 {
     currPos = pos;
+}
+
+void StepperMotorController::setReqPos(uint8_t pos) {
+    reqPos = pos;
 }
 
 uint8_t StepperMotorController::getReqPos()
