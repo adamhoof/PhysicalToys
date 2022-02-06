@@ -60,5 +60,8 @@ void MQTTClientHandler::maintainConnection()
 {
     if (!client.loop()) { //returns false if client is not connected
         reconnect();
+        if (!client.connected()){
+            ESP.restart();
+        }
     }
 }

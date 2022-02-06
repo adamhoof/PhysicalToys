@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include "MQTTClientHandler.h"
-#include "WifiConnector.h"
+#include "WifiClientHandler.h"
 #include "OTAHandler.h"
 #include "OfficeLampController.h"
 
 MQTTClientHandler mqttClientHandler {};
-WifiConnector wifiConnector {};
+WifiClientHandler wifiClientHandler {};
 OTAHandler otaHandler {};
 
 ApplianceController::OfficeLampController officeLampController {};
@@ -27,7 +27,7 @@ void setup()
 
     Serial.begin(115200);
 
-    wifiConnector.connect();
+    wifiClientHandler.connect();
 
     mqttClientHandler.setCertificates();
     mqttClientHandler.start();
@@ -41,11 +41,7 @@ void setup()
 
 void loop()
 {
-    if (!WiFi.isConnected()) {
-        wifiConnector.disconnect();
-        wifiConnector.connect();
-    }
+    wifiClientHandler.maintainConnection();
     otaHandler.maintainConnection();
     mqttClientHandler.maintainConnection();
-    delay(12); //the guy here talking bout keepalive: https://esp32.com/viewtopic.php?t=3851
 }
