@@ -1,8 +1,8 @@
-#include "WifiClientHandler.h"
+#include "WifiController.h"
 
-WifiClientHandler::WifiClientHandler() = default;
+WifiController::WifiController() = default;
 
-void WifiClientHandler::connect()
+void WifiController::connect()
 {
     WiFiClass::mode(WIFI_STA);
 
@@ -15,14 +15,15 @@ void WifiClientHandler::connect()
     WiFi.waitForConnectResult();
 }
 
-void WifiClientHandler::maintainConnection()
-{
-    if (!WiFi.isConnected()) {
-        ESP.restart();
-    }
-}
-
-void WifiClientHandler::disconnect()
+void WifiController::disconnect()
 {
     WiFi.disconnect();
+}
+
+void WifiController::maintainConnection()
+{
+    if (!WiFi.isConnected()) {
+        disconnect();
+        connect();
+    }
 }

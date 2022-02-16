@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include "MQTTClientHandler.h"
-#include "WifiConnector.h"
+#include "WifiController.h"
 #include "OTAHandler.h"
 #include "OfficeCeilLightController.h"
+#include "TimeKeeper.h"
 
 MQTTClientHandler mqttClientHandler {};
-WifiConnector wifiConnector {};
+WifiController wifiController {};
 OTAHandler otaHandler {};
+TimeKeeper timeKeeper{};
 
 PhysicalToyController::OfficeCeilLightController officeCeilLightController {};
 
@@ -26,7 +28,7 @@ void setup()
     officeCeilLightController.setTogglePin(18);
     officeCeilLightController.init();
 
-    wifiConnector.connect();
+    wifiController.connect();
 
     mqttClientHandler.setCertificates();
     mqttClientHandler.start();
@@ -40,10 +42,11 @@ void setup()
 
 void loop()
 {
-    if (!WiFi.isConnected()) {
-        wifiConnector.disconnect();
-        wifiConnector.connect();
+    if (!timeKeeper.unitsOfTimePassed(240, MINUTES)){
+        wifiController.maintainConnection();
+        otaHandler.maintainConnection();
+        mqttClientHandler.maintainConnection();
+        return;
     }
-    otaHandler.maintainConnection();
-    mqttClientHandler.maintainConnection();
+    ESP.restart();
 }

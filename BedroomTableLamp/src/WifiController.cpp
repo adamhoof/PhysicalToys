@@ -24,3 +24,11 @@ void WifiController::disconnect()
 {
     WiFi.disconnect();
 }
+
+void WifiController::maintainConnection()
+{
+    if (!WiFi.isConnected()) {
+        disconnect();
+        connect();
+    }
+}

@@ -1,8 +1,8 @@
-#include "WifiConnector.h"
+#include "WifiController.h"
 
-WifiConnector::WifiConnector() = default;
+WifiController::WifiController() = default;
 
-void WifiConnector::connect()
+void WifiController::connect()
 {
     WiFiClass::mode(WIFI_STA);
 
@@ -15,8 +15,16 @@ void WifiConnector::connect()
     WiFi.waitForConnectResult();
 }
 
-void WifiConnector::disconnect()
+void WifiController::disconnect()
 {
     WiFi.disconnect();
+}
+
+void WifiController::maintainConnection()
+{
+    if (!WiFi.isConnected()) {
+        disconnect();
+        connect();
+    }
 }
 

@@ -5,12 +5,14 @@
 const char WIFI_SSID[] = "Gei";
 const char WIFI_PASSWORD[] = "1234567890";
 
-class WifiConnector
+class WifiController
 {
 public:
-    WifiConnector();
+    WifiController();
 
     void connect();
+
+    void maintainConnection();
 
     void disconnect();
 };

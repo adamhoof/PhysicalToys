@@ -1,13 +1,15 @@
 #include <Arduino.h>
 #include <MQTTClientHandler.h>
-#include <WifiClientHandler.h>
+#include <WifiController.h>
 #include <OTAHandler.h>
 #include "ShadesController.h"
 #include "StepperMotorController.h"
+#include "TimeKeeper.h"
 
 MQTTClientHandler mqttClientHandler {};
-WifiClientHandler wifiClientHandler {};
+WifiController wifiController {};
 OTAHandler otaHandler {};
+TimeKeeper timeKeeper {};
 
 StepperMotorController stepperMotorController {};
 PhysicalToyController::ShadesController shadesController {};
@@ -47,7 +49,7 @@ void setup()
     stepperMotorController.setupPins(18, 19, 21, 22);
     stepperMotorController.setDelayBetweenSteps(3);
 
-    wifiClientHandler.connect();
+    wifiController.connect();
 
     otaHandler.setEvents();
     otaHandler.init();
@@ -61,30 +63,36 @@ void setup()
 
 void loop()
 {
-    wifiClientHandler.maintainConnection();
+    if (!timeKeeper.unitsOfTimePassed(180, MINUTES)) {
 
-    if (POSITIONS_EQUAL) {
-        otaHandler.maintainConnection();
+        wifiController.maintainConnection();
         mqttClientHandler.maintainConnection();
-        delay(12); //the guy here talking bout keepalive: https://esp32.com/viewtopic.php?t=3851
+
+        if (POSITIONS_EQUAL) {
+            otaHandler.maintainConnection();
+            mqttClientHandler.maintainConnection();
+            delay(12);
+            return;
+        }
+
+        String status {};
+        stepperMotorController.getReqPos() == OPEN ? status = "opening" : status = "closing";
+
+        mqttClientHandler.publish(status);
+        delay(20);
+        mqttClientHandler.disconnect();
+        delay(20);
+        wifiController.disconnect();
+
+        REQ_POS_GREATER_THAN_CURR ? shadesController.open(stepperMotorController)
+                                  : shadesController.close(stepperMotorController);
+
+        wifiController.connect();
+        mqttClientHandler.reconnect();
+
+        status == "opening" ? status = "open" : status = "close";
+        mqttClientHandler.publish(status);
         return;
     }
-
-    String status {};
-    stepperMotorController.getReqPos() == OPEN ? status = "opening" : status = "closing";
-
-    mqttClientHandler.publish(status);
-    delay(20);
-    mqttClientHandler.disconnect();
-    delay(20);
-    wifiClientHandler.disconnect();
-
-    REQ_POS_GREATER_THAN_CURR ? shadesController.open(stepperMotorController)
-                              : shadesController.close(stepperMotorController);
-
-    wifiClientHandler.connect();
-    mqttClientHandler.reconnect();
-
-    status == "opening" ? status = "open" : status = "close";
-    mqttClientHandler.publish(status);
+    ESP.restart();
 }

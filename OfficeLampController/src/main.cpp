@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include "MQTTClientHandler.h"
-#include "WifiClientHandler.h"
+#include "WifiController.h"
 #include "OTAHandler.h"
 #include "OfficeLampController.h"
+#include "TimeKeeper.h"
 
 MQTTClientHandler mqttClientHandler {};
-WifiClientHandler wifiClientHandler {};
+WifiController wifiController {};
 OTAHandler otaHandler {};
+TimeKeeper timeKeeper{};
 
 ApplianceController::OfficeLampController officeLampController {};
 
@@ -27,7 +29,7 @@ void setup()
 
     Serial.begin(115200);
 
-    wifiClientHandler.connect();
+    wifiController.connect();
 
     mqttClientHandler.setCertificates();
     mqttClientHandler.start();
@@ -41,7 +43,11 @@ void setup()
 
 void loop()
 {
-    wifiClientHandler.maintainConnection();
-    otaHandler.maintainConnection();
-    mqttClientHandler.maintainConnection();
+    if (!timeKeeper.unitsOfTimePassed(240, MINUTES)){
+        wifiController.maintainConnection();
+        otaHandler.maintainConnection();
+        mqttClientHandler.maintainConnection();
+        return;
+    }
+    ESP.restart();
 }

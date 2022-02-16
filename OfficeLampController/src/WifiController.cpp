@@ -1,10 +1,9 @@
-#include "WifiClientHandler.h"
+#include "WifiController.h"
 
-WifiClientHandler::WifiClientHandler() = default;
+WifiController::WifiController() = default;
 
-void WifiClientHandler::connect()
+void WifiController::connect()
 {
-    /*WiFi.persistent(false);*/
     WiFiClass::mode(WIFI_STA);
 
     String wifiHostname = "OfficeTableLamp";
@@ -21,14 +20,15 @@ void WifiClientHandler::connect()
     Serial.println(WiFi.localIP());
 }
 
-void WifiClientHandler::maintainConnection()
-{
-    if (!WiFi.isConnected()) {
-        ESP.restart();
-    }
-}
-
-void WifiClientHandler::disconnect()
+void WifiController::disconnect()
 {
     WiFi.disconnect();
+}
+
+void WifiController::maintainConnection()
+{
+    if (!WiFi.isConnected()) {
+        disconnect();
+        connect();
+    }
 }

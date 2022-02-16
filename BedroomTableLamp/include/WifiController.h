@@ -13,4 +13,6 @@ public:
     void connect();
 
     void disconnect();
+
+    void maintainConnection();
 };

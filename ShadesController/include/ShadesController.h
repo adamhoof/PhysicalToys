@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WifiClientHandler.h"
+#include "WifiController.h"
 #include "MQTTClientHandler.h"
 #include "StepperMotorController.h"
 
