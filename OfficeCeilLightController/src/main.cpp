@@ -3,18 +3,18 @@
 #include "WifiController.h"
 #include "OTAHandler.h"
 #include "OfficeCeilLightController.h"
-#include "TimeKeeper.h"
+#include "StatusDiodeController.h"
 
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
 OTAHandler otaHandler {};
-TimeKeeper timeKeeper{};
+StatusDiodeController statusDiodeController {};
 
 PhysicalToyController::OfficeCeilLightController officeCeilLightController {};
 
 void messageHandler(String& topic, String& payload)
 {
-    if (payload == *officeCeilLightController.currentModePtr){
+    if (payload == *officeCeilLightController.currentModePtr) {
         return;
     }
     String mode = officeCeilLightController.changeMode(payload);
@@ -27,6 +27,10 @@ void setup()
 
     officeCeilLightController.setTogglePin(18);
     officeCeilLightController.init();
+
+    statusDiodeController.init();
+    statusDiodeController.setBrightness(60);
+    statusDiodeController.red();
 
     wifiController.connect();
 
@@ -42,11 +46,15 @@ void setup()
 
 void loop()
 {
-    if (!timeKeeper.unitsOfTimePassed(240, MINUTES)){
-        wifiController.maintainConnection();
-        otaHandler.maintainConnection();
-        mqttClientHandler.maintainConnection();
-        return;
+    if (!WiFi.isConnected()) {
+        statusDiodeController.red();
+        wifiController.disconnect();
+        wifiController.connect();
+    } else {statusDiodeController.green();}
+
+    if (!mqttClientHandler.client.connected()) {
+        statusDiodeController.yellow();
+        mqttClientHandler.reconnect();
     }
-    ESP.restart();
+    otaHandler.maintainConnection();
 }
