@@ -1,0 +1,13 @@
+{
+  "name": "MQTTClientHandler",
+  "version": "1.0",
+  "description": "MQTTs Client library",
+  "keywords": "MQTTClientHandler",
+  "authors":
+  [
+    {
+      "name": "Adam Hofman",
+	"maintainer": true
+    }
+]
+}

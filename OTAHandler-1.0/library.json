@@ -1,0 +1,13 @@
+{
+  "name": "OTAHandler",
+  "version": "1.0",
+  "description": "Library allowing Over The Air updates",
+  "keywords": "OTAHandler",
+  "authors":
+  [
+    {
+      "name": "Adam Hofman",
+	"maintainer": true
+    }
+]
+}

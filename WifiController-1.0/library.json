@@ -1,0 +1,13 @@
+{
+  "name": "WifiController",
+  "version": "1.0",
+  "description": "Library allowing wifi connection and secure wifi client",
+  "keywords": "WifiController",
+  "authors":
+  [
+    {
+      "name": "Adam Hofman",
+	"maintainer": true
+    }
+]
+}
