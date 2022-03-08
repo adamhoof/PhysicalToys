@@ -1,7 +1,8 @@
 #include <Arduino.h>
-#include "MQTTClientHandler.h"
-#include "WifiController.h"
-#include "OTAHandler.h"
+#include "certs.h"
+#include "../.pio/libdeps/m5stick-c/OTAHandler/include/OTAHandler.h"
+#include "../.pio/libdeps/m5stick-c/WifiController//include/WifiController.h"
+#include "../.pio/libdeps/m5stick-c/MQTTClientHandler/include/MQTTClientHandler.h"
 #include "OfficeCeilLightController.h"
 
 MQTTClientHandler mqttClientHandler {};
@@ -47,13 +48,18 @@ void setup()
     officeCeilLightController.setTogglePin(18);
     officeCeilLightController.init();
 
-    wifiController.connect();
+    char id [] = "office_ceil_light";
+    String pubTopic  = "reply/officeceillight";
+    String subTopic  = "set/officeceillight";
 
-    wifiController.setCertificates();
+    wifiController.connect(id);
+
+    wifiController.setCertificates(CA_CERT, CLIENT_CERT, CLIENT_KEY);
     mqttClientHandler.start(wifiController.wiFiClientSecure());
+    mqttClientHandler.setPublishTopic(pubTopic);
     mqttClientHandler.client.onMessage(messageHandler);
-    mqttClientHandler.connect();
-    mqttClientHandler.setSubscriptions();
+    mqttClientHandler.connect(id);
+    mqttClientHandler.setSubscribeTopic(subTopic);
 
     xTaskCreatePinnedToCore(
             maintainServicesConnection,
