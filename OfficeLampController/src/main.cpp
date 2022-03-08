@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "OfficeLampController.h"
 #include "certs.h"
-#include "../lib/OTAHandler-1.0/include/OTAHandler.h"
-#include "../lib/WifiController-1.0/include/WifiController.h"
-#include "../lib/MQTTClientHandler-1.0/include/MQTTClientHandler.h"
+#include "../.pio/libdeps/pico32/OTAHandler/include/OTAHandler.h"
+#include "../.pio/libdeps/pico32/WifiController/include/WifiController.h"
+#include "../.pio/libdeps/pico32/MQTTClientHandler/include/MQTTClientHandler.h"
 
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
