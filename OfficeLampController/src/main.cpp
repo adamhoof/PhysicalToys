@@ -49,7 +49,8 @@ void setup()
     mqttClientHandler.setWiFiClient(wifiController.wiFiClientSecure());
     mqttClientHandler.setSubscribeTopic(sub).setPublishTopic(pub);
     mqttClientHandler.connectAndSubscribe();
-    mqttClientHandler.mqttClient.onMessage(messageHandler);
+    mqttClientHandler.setCallback();
+    mqttClientHandler.mqttClient.setCallback(messageHandler);
 
     xTaskCreatePinnedToCore(
             keepOTACapability,
