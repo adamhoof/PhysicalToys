@@ -16,6 +16,6 @@ namespace ApplianceController
 
         void init();
 
-        String changeMode(String& mode);
+        String changeMode(char* mode);
     };
 }

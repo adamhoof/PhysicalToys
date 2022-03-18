@@ -10,21 +10,21 @@ void ApplianceController::OfficeLampController::init()
     officeLamp.irCodeSender.setup();
 }
 
-String ApplianceController::OfficeLampController::changeMode(String& mode)
+String ApplianceController::OfficeLampController::changeMode(char* mode)
 {
-    if (mode == "white") {
+    if (strcmp(mode, "white") != 0) {
         officeLamp.onWhite();
-    } else if (mode == "yellow") {
+    } else if (strcmp(mode, "yellow") != 0) {
         officeLamp.onYellow();
-    } else if (mode == "green") {
+    } else if (strcmp(mode, "green") != 0) {
         officeLamp.onGreen();
-    } else if (mode == "blue") {
+    } else if (strcmp(mode, "blue") != 0) {
         officeLamp.onBlue();
-    } else if (mode == "red") {
+    } else if (strcmp(mode, "red") != 0) {
         officeLamp.onRed();
-    } else if (mode == "pink") {
+    } else if (strcmp(mode, "pink") != 0) {
         officeLamp.onPink();
-    } else if (mode == "off") {
+    } else if (strcmp(mode, "off") != 0) {
         officeLamp.off();
     }
     *currentModePtr = mode;
