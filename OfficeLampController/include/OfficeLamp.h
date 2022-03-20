@@ -11,17 +11,9 @@ namespace PhysicalToy
 
         IRCodeSender irCodeSender{};
 
-        void onWhite();
+        void on();
 
-        void onYellow();
-
-        void onBlue();
-
-        void onGreen();
-
-        void onRed();
-
-        void onPink();
+        void mode(uint32_t mode);
 
         void off();
     };

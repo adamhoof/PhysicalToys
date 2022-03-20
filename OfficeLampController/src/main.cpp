@@ -9,8 +9,9 @@ MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
 
 ApplianceController::OfficeLampController officeLampController {};
+bool shouldPublish = false;
 
-void keepOTACapability(void* params)
+void OTACapability(void* params)
 {
     OTAHandler otaHandler {};
 
@@ -24,9 +25,16 @@ void keepOTACapability(void* params)
     }
 }
 
-void messageHandler(char* topic, byte* payload, unsigned int length)
+void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
-    Serial.write(payload, length);
+    char payloadAsCharArray[length + 1]; //increment size of array by one to be able to insert null terminator
+    payloadAsCharArray[length] = '\0'; //insert null terminator
+
+    for (int i = 0; i < length; i++) {
+        payloadAsCharArray[i] = char(payload[i]);
+    }
+    officeLampController.changeMode(payloadAsCharArray);
+    shouldPublish = true;
 }
 
 void setup()
@@ -52,8 +60,8 @@ void setup()
     mqttClientHandler.setCallback(messageHandler);
 
     xTaskCreatePinnedToCore(
-            keepOTACapability,
-            "KeepOTAAlive",
+            OTACapability,
+            "OTACapability",
             3500,
             nullptr,
             2,
@@ -67,4 +75,8 @@ void loop()
     wifiController.maintainConnection();
     mqttClientHandler.maintainConnection();
     delay(10);
+
+    if (shouldPublish){
+
+    }
 }

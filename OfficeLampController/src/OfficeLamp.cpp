@@ -3,37 +3,20 @@
 
 PhysicalToy::OfficeLamp::OfficeLamp() = default;
 
-void PhysicalToy::OfficeLamp::onWhite()
+void PhysicalToy::OfficeLamp::on()
 {
-    irCodeSender.onWhite();
-}
-
-void PhysicalToy::OfficeLamp::onYellow()
-{
-    irCodeSender.onYellow();
-}
-
-void PhysicalToy::OfficeLamp::onBlue()
-{
-    irCodeSender.onBlue();
-}
-
-void PhysicalToy::OfficeLamp::onGreen()
-{
-    irCodeSender.onGreen();
-}
-
-void PhysicalToy::OfficeLamp::onRed()
-{
-    irCodeSender.onRed();
-}
-
-void PhysicalToy::OfficeLamp::onPink()
-{
-    irCodeSender.onPink();
+    irCodeSender.send(0x00F7C03F);
 }
 
 void PhysicalToy::OfficeLamp::off()
 {
-    irCodeSender.off();
+    irCodeSender.send(0x00F740BF);
 }
+
+void PhysicalToy::OfficeLamp::mode(uint32_t mode)
+{
+    on();
+    irCodeSender.send(mode);
+}
+
+
