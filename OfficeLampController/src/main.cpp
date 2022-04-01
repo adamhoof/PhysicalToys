@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "OfficeLampController.h"
-#include "certs.h"
+#include "credentials.h"
 #include <WifiController.h>
 #include <MQTTClientHandler.h>
 #include <OTAHandler.h>
@@ -9,6 +9,8 @@ MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
 
 ApplianceController::OfficeLampController officeLampController {};
+
+char payloadToSend[10];
 bool shouldPublish = false;
 
 void OTACapability(void* params)
@@ -27,13 +29,12 @@ void OTACapability(void* params)
 
 void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
-    char payloadAsCharArray[length + 1]; //increment size of array by one to be able to insert null terminator
-    payloadAsCharArray[length] = '\0'; //insert null terminator
-
     for (int i = 0; i < length; i++) {
-        payloadAsCharArray[i] = char(payload[i]);
+        payloadToSend[i] = char(payload[i]);
     }
-    officeLampController.changeMode(payloadAsCharArray);
+    payloadToSend[length] = '\0';
+
+    officeLampController.changeMode(payloadToSend);
     shouldPublish = true;
 }
 
@@ -44,10 +45,6 @@ void setup()
     officeLampController.init();
 
     Serial.begin(115200);
-
-    char host[] = "office_lamp";
-    char pub[] = "reply/officelamp";
-    char sub[] = "set/officelamp";
 
     wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
     wifiController.connect();
@@ -77,6 +74,7 @@ void loop()
     delay(10);
 
     if (shouldPublish){
-
+        mqttClientHandler.publish(payloadToSend);
+        shouldPublish = false;
     }
 }
