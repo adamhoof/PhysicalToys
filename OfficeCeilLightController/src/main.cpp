@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "certs.h"
-#include "../.pio/libdeps/m5stick-c/OTAHandler/include/OTAHandler.h"
-#include "../.pio/libdeps/m5stick-c/WifiController//include/WifiController.h"
-#include "../.pio/libdeps/m5stick-c/MQTTClientHandler/include/MQTTClientHandler.h"
 #include "OfficeCeilLightController.h"
+#include <WifiController.h>
+#include <MQTTClientHandler.h>
+#include <OTAHandler.h>
 
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
@@ -32,13 +32,17 @@ void maintainServicesConnection(void* params)
     }
 }
 
-void messageHandler(String& topic, String& payload)
+char payloadToSend[10];
+bool shouldPublish = false;
+
+void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
-    if (payload == *officeCeilLightController.currentModePtr){
-        return;
+    for (int i = 0; i < length; i++) {
+        payloadToSend[i] = char(payload[i]);
     }
-    String mode = officeCeilLightController.changeMode(payload);
-    mqttClientHandler.publish(mode);
+    payloadToSend[length] = '\0';
+    String mode = officeCeilLightController.changeMode(payloadToSend);
+    shouldPublish = true;
 }
 
 void setup()
@@ -48,28 +52,15 @@ void setup()
     officeCeilLightController.setTogglePin(18);
     officeCeilLightController.init();
 
-    char id [] = "office_ceil_light";
-    String pubTopic  = "reply/officeceillight";
-    String subTopic  = "set/officeceillight";
-
-    wifiController.connect(id);
-
+    wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
+    wifiController.connect();
     wifiController.setCertificates(CA_CERT, CLIENT_CERT, CLIENT_KEY);
-    mqttClientHandler.start(wifiController.wiFiClientSecure());
-    mqttClientHandler.setPublishTopic(pubTopic);
-    mqttClientHandler.client.onMessage(messageHandler);
-    mqttClientHandler.connect(id);
-    mqttClientHandler.setSubscribeTopic(subTopic);
 
-    xTaskCreatePinnedToCore(
-            maintainServicesConnection,
-            "KeepServicesAlive",
-            3500,
-            nullptr,
-            1,
-            nullptr,
-            CONFIG_ARDUINO_RUNNING_CORE
-    );
+    mqttClientHandler.setHostname(host).setServerAndPort(server, port);
+    mqttClientHandler.setWiFiClient(wifiController.wiFiClientSecure());
+    mqttClientHandler.setSubscribeTopic(sub).setPublishTopic(pub);
+    mqttClientHandler.connectAndSubscribe();
+    mqttClientHandler.setCallback(messageHandler);
 
     xTaskCreatePinnedToCore(
             keepOTACapability,
@@ -84,5 +75,12 @@ void setup()
 
 void loop()
 {
+    wifiController.maintainConnection();
+    mqttClientHandler.maintainConnection();
     delay(10);
+
+    if (shouldPublish) {
+        mqttClientHandler.publish(payloadToSend);
+        shouldPublish = false;
+    }
 }
