@@ -13,7 +13,7 @@ namespace ApplianceController
         uint8_t numberOfLeds {};
 
     private:
-        Adafruit_NeoPixel pixelMatrix = Adafruit_NeoPixel(numberOfLeds, controlPin, NEO_RBG + NEO_KHZ800);
+        Adafruit_NeoPixel arrayOfLedPixels = Adafruit_NeoPixel(numberOfLeds, controlPin, NEO_RBG + NEO_KHZ800);
 
         std::map<const std::string, const uint32_t> availableModes = {
                 {"yellow", Adafruit_NeoPixel::Color(127, 0, 255) },
@@ -28,9 +28,9 @@ namespace ApplianceController
     public:
         LampController(uint8_t controlPin, uint8_t numOfLeds);
 
-        void setBrightness(uint8_t brightness);
-
         void init();
+
+        void setBrightness(uint8_t brightness);
 
         void changeMode(const char* modeToSet);
     };

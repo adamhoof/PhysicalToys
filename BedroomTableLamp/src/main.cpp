@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "LampController.h"
-#include "certs.h"
+#include "credentials.h"
 #include <WifiController.h>
 #include <MQTTClientHandler.h>
 #include <OTAHandler.h>
@@ -42,12 +42,8 @@ void setup()
 {
     btStop();
 
-    pinMode(25,OUTPUT);
-
-    Serial.begin(115200);
-
     lampController.init();
-    lampController.setBrightness(120);
+    lampController.setBrightness(115);
 
     wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
     wifiController.connect();
