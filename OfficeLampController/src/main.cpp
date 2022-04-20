@@ -11,7 +11,7 @@ WifiController wifiController {};
 ApplianceController::OfficeLampController officeLampController {};
 
 char payloadToSend[10];
-bool shouldPublish = false;
+bool receivedChangeModeRequest = false;
 
 void OTACapability(void* params)
 {
@@ -34,8 +34,7 @@ void messageHandler(char* topic, const byte* payload, unsigned int length)
     }
     payloadToSend[length] = '\0';
 
-    officeLampController.changeMode(payloadToSend);
-    shouldPublish = true;
+    receivedChangeModeRequest = true;
 }
 
 void setup()
@@ -73,8 +72,9 @@ void loop()
     mqttClientHandler.maintainConnection();
     delay(10);
 
-    if (shouldPublish){
+    if (receivedChangeModeRequest){
+        officeLampController.changeMode(payloadToSend);
         mqttClientHandler.publish(payloadToSend);
-        shouldPublish = false;
+        receivedChangeModeRequest = false;
     }
 }
