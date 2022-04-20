@@ -2,7 +2,7 @@
 
 #include "OfficeCeilLight.h"
 
-namespace PhysicalToyController
+namespace ToyController
 {
     class OfficeCeilLightController
     {

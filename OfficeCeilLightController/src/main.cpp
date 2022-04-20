@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "certs.h"
+#include "credentials.h"
 #include "OfficeCeilLightController.h"
 #include <WifiController.h>
 #include <MQTTClientHandler.h>
@@ -7,7 +7,7 @@
 
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
-PhysicalToyController::OfficeCeilLightController officeCeilLightController {};
+ToyController::OfficeCeilLightController officeCeilLightController {};
 
 void keepOTACapability(void* params)
 {
