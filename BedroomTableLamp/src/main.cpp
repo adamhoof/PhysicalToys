@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include "certs.h"
-#include "../.pio/libdeps/m5stick-c/OTAHandler/include/OTAHandler.h"
-#include "../.pio/libdeps/m5stick-c/WifiController//include/WifiController.h"
-#include "../.pio/libdeps/m5stick-c/MQTTClientHandler/include/MQTTClientHandler.h"
 #include "LampController.h"
+#include "certs.h"
+#include <WifiController.h>
+#include <MQTTClientHandler.h>
+#include <OTAHandler.h>
 
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
@@ -24,54 +24,40 @@ void keepOTACapability(void* params)
     }
 }
 
-void maintainServicesConnection(void* params)
-{
-    for (;;) {
-        wifiController.maintainConnection();
-        mqttClientHandler.maintainConnection();
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-}
+char payloadToSend[10];
+bool shouldPublish = false;
 
-void messageHandler(String& topic, String& payload)
+void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
-    if (payload == *lampController.getCurrentModePtr()) {
-        return;
+    for (int i = 0; i < length; i++) {
+        payloadToSend[i] = char(payload[i]);
     }
-    Serial.println(payload);
-    String mode = lampController.changeMode(payload);
-    mqttClientHandler.publish(mode);
+    payloadToSend[length] = '\0';
+
+    /*lampController.changeMode(payloadToSend);*/
+    shouldPublish = true;
 }
 
 void setup()
 {
     btStop();
 
+    pinMode(25,OUTPUT);
+
+    Serial.begin(115200);
+
     lampController.init();
     lampController.setBrightness(150);
 
-    char id [] = "bedroom_lamp";
-    String pubTopic  = "reply/bedroomlamp";
-    String subTopic  = "set/bedroomlamp";
-
-    wifiController.connect(id);
-
+    wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
+    wifiController.connect();
     wifiController.setCertificates(CA_CERT, CLIENT_CERT, CLIENT_KEY);
-    mqttClientHandler.start(wifiController.wiFiClientSecure());
-    mqttClientHandler.setPublishTopic(pubTopic);
-    mqttClientHandler.client.onMessage(messageHandler);
-    mqttClientHandler.connect(id);
-    mqttClientHandler.setSubscribeTopic(subTopic);
 
-    xTaskCreatePinnedToCore(
-            maintainServicesConnection,
-            "KeepServicesAlive",
-            3500,
-            nullptr,
-            1,
-            nullptr,
-            CONFIG_ARDUINO_RUNNING_CORE
-    );
+    mqttClientHandler.setHostname(host).setServerAndPort(server, port);
+    mqttClientHandler.setWiFiClient(wifiController.wiFiClientSecure());
+    mqttClientHandler.setSubscribeTopic(sub).setPublishTopic(pub);
+    mqttClientHandler.connectAndSubscribe();
+    mqttClientHandler.setCallback(messageHandler);
 
     xTaskCreatePinnedToCore(
             keepOTACapability,
