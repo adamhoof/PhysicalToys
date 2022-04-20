@@ -25,7 +25,7 @@ void keepOTACapability(void* params)
 }
 
 char payloadToSend[10];
-bool shouldPublish = false;
+bool receivedModeChangeRequest = false;
 
 void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
@@ -34,8 +34,7 @@ void messageHandler(char* topic, const byte* payload, unsigned int length)
     }
     payloadToSend[length] = '\0';
 
-    lampController.changeMode(payloadToSend);
-    shouldPublish = true;
+    receivedModeChangeRequest = true;
 }
 
 void setup()
@@ -72,8 +71,9 @@ void loop()
     mqttClientHandler.maintainConnection();
     delay(10);
 
-    if (shouldPublish){
+    if (receivedModeChangeRequest){
+        lampController.changeMode(payloadToSend);
         mqttClientHandler.publish(payloadToSend);
-        shouldPublish = false;
+        receivedModeChangeRequest = false;
     }
 }
