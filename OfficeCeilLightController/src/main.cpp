@@ -41,7 +41,8 @@ void messageHandler(char* topic, const byte* payload, unsigned int length)
         payloadToSend[i] = char(payload[i]);
     }
     payloadToSend[length] = '\0';
-    String mode = officeCeilLightController.changeMode(payloadToSend);
+
+    officeCeilLightController.changeMode(payloadToSend);
     shouldPublish = true;
 }
 

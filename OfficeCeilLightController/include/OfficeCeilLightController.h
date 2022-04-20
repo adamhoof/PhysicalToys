@@ -18,7 +18,6 @@ namespace PhysicalToyController
 
         void init() const;
 
-        String changeMode(String& mode);
-
+        void changeMode(char* modeToSet);
     };
 }

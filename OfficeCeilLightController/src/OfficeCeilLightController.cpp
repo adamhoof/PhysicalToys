@@ -15,9 +15,7 @@ void PhysicalToyController::OfficeCeilLightController::init() const
     pinMode(officeLamp.togglePin, OUTPUT);
 }
 
-String PhysicalToyController::OfficeCeilLightController::changeMode(String& mode)
+void PhysicalToyController::OfficeCeilLightController::changeMode(char* modeToSet)
 {
-    mode == ON ? officeLamp.on() : officeLamp.off();
-    *currentModePtr = mode;
-    return mode;
+    strcmp(modeToSet, ON) != 0 ? officeLamp.off() : officeLamp.on();
 }
