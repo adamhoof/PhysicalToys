@@ -8,7 +8,7 @@
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
 
-ApplianceController::LampController lampController {};
+ApplianceController::LampController lampController {32, 8};
 
 void keepOTACapability(void* params)
 {
@@ -34,7 +34,7 @@ void messageHandler(char* topic, const byte* payload, unsigned int length)
     }
     payloadToSend[length] = '\0';
 
-    /*lampController.changeMode(payloadToSend);*/
+    lampController.changeMode(payloadToSend);
     shouldPublish = true;
 }
 
@@ -47,7 +47,7 @@ void setup()
     Serial.begin(115200);
 
     lampController.init();
-    lampController.setBrightness(150);
+    lampController.setBrightness(120);
 
     wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
     wifiController.connect();
@@ -72,5 +72,12 @@ void setup()
 
 void loop()
 {
+    wifiController.maintainConnection();
+    mqttClientHandler.maintainConnection();
     delay(10);
+
+    if (shouldPublish){
+        mqttClientHandler.publish(payloadToSend);
+        shouldPublish = false;
+    }
 }

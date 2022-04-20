@@ -2,53 +2,36 @@
 
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include <map>
 
 namespace ApplianceController
 {
     class LampController
     {
     private:
-        String currentMode;
-        String* currentModePtr;
-
-        uint8_t ledPin {};
+        uint8_t controlPin {};
         uint8_t numberOfLeds {};
 
-        Adafruit_NeoPixel pixelMatrix = Adafruit_NeoPixel(numberOfLeds, ledPin, NEO_RBG + NEO_KHZ800);
+    private:
+        Adafruit_NeoPixel pixelMatrix = Adafruit_NeoPixel(numberOfLeds, controlPin, NEO_RBG + NEO_KHZ800);
 
-        const uint32_t yellowC {Adafruit_NeoPixel::Color(127, 0, 255)};
-        const uint32_t orangeC {Adafruit_NeoPixel::Color(70, 0, 255)};
-        const uint32_t greenC {Adafruit_NeoPixel::Color(255, 0, 0)};
-        const uint32_t blueC {Adafruit_NeoPixel::Color(0, 255, 0)};
-        const uint32_t redC {Adafruit_NeoPixel::Color(0, 0, 255)};
-        const uint32_t pinkC {Adafruit_NeoPixel::Color(0, 255, 255)};
-        const uint32_t offC {Adafruit_NeoPixel::Color(0, 0, 0)};
+        std::map<const std::string, const uint32_t> availableModes = {
+                {"yellow", Adafruit_NeoPixel::Color(127, 0, 255) },
+                {"orange", Adafruit_NeoPixel::Color(70, 0, 255) },
+                {"green", Adafruit_NeoPixel::Color(255, 0, 0) },
+                {"blue", Adafruit_NeoPixel::Color(0, 255, 0) },
+                {"red", Adafruit_NeoPixel::Color(0, 0, 255) },
+                {"pink", Adafruit_NeoPixel::Color(0, 255, 255) },
+                {"off", Adafruit_NeoPixel::Color(0, 0, 0) },
+        };
 
     public:
-        LampController();
+        LampController(uint8_t controlPin, uint8_t numOfLeds);
 
         void setBrightness(uint8_t brightness);
 
         void init();
 
-        void yellow();
-
-        void orange();
-
-        void green();
-
-        void blue();
-
-        void red();
-
-        void pink();
-
-        void off();
-
-        void lightUpAll(uint32_t color);
-
-        String changeMode(String& mode);
-
-        String* getCurrentModePtr() const;
+        void changeMode(const char* modeToSet);
     };
 }
