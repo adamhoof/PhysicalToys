@@ -1,9 +1,11 @@
 #include <Arduino.h>
-#include <MQTTClientHandler.h>
-#include <WifiController.h>
-#include <OTAHandler.h>
 #include "ShadesController.h"
 #include "StepperMotorController.h"
+#include <certs.h>
+#include <WifiController.h>
+#include <MQTTClientHandler.h>
+#include <OTAHandler.h>
+
 
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
@@ -11,28 +13,21 @@ WifiController wifiController {};
 StepperMotorController stepperMotorController {};
 PhysicalToyController::ShadesController shadesController {};
 
-void maintainOTAConnection(void* params)
+void OTACapability(void* params)
 {
     OTAHandler otaHandler {};
+
     otaHandler.setEvents();
     otaHandler.init();
+    delay(10);
 
     for (;;) {
         otaHandler.maintainConnection();
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-    }
-}
-
-void maintainServicesConnection(void* params)
-{
-    for (;;) {
-        wifiController.maintainConnection();
-        mqttClientHandler.maintainConnection();
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
-void messageHandler(String& topic, String& payload)
+void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
     if (mqttClientHandler.isFirstMessageAfterBoot) {
 
@@ -65,8 +60,6 @@ void messageHandler(String& topic, String& payload)
 
 void setup()
 {
-    Serial.begin(115200);
-
     btStop();
 
     pinMode(32, INPUT_PULLUP);
@@ -74,35 +67,18 @@ void setup()
     stepperMotorController.setupPins(18, 19, 21, 22);
     stepperMotorController.setDelayBetweenSteps(3);
 
+    wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
     wifiController.connect();
+    wifiController.setCertificates(CA_CERT, CLIENT_CERT, CLIENT_KEY);
 
-    Serial.println("Connected to wifi");
-
-    Serial.println("Ota initiated");
-
-    Serial.println("Setting certs");
-    wifiController.setCertificates();
-    Serial.println("Certificates ok");
-    mqttClientHandler.start(wifiController.wiFiClientSecure());
-    Serial.println("Client started");
-    mqttClientHandler.client.onMessage(messageHandler);
-    mqttClientHandler.connect();
-    mqttClientHandler.setSubscriptions();
-
-    Serial.println("MQTT client connected");
+    mqttClientHandler.setHostname(host).setServerAndPort(server, port);
+    mqttClientHandler.setWiFiClient(wifiController.wiFiClientSecure());
+    mqttClientHandler.setSubscribeTopic(sub).setPublishTopic(pub);
+    mqttClientHandler.connectAndSubscribe();
+    mqttClientHandler.setCallback(messageHandler);
 
     xTaskCreatePinnedToCore(
-            maintainServicesConnection,
-            "KeepServicesAlive",
-            3500,
-            nullptr,
-            1,
-            nullptr,
-            CONFIG_ARDUINO_RUNNING_CORE
-    );
-
-    xTaskCreatePinnedToCore(
-            maintainOTAConnection,
+            OTACapability,
             "KeepOTAAlive",
             3500,
             nullptr,
@@ -114,6 +90,10 @@ void setup()
 
 void loop()
 {
+    wifiController.maintainConnection();
+    mqttClientHandler.maintainConnection();
+    delay(10);
+
     if (POSITIONS_EQUAL) {
         delay(10);
         return;
