@@ -1,8 +1,18 @@
 #include "ShadesController.h"
 
-PhysicalToyController::ShadesController::ShadesController() = default;
+ToyController::ShadesController::ShadesController() = default;
 
-void PhysicalToyController::ShadesController::open(StepperMotorController& motorController)
+void ToyController::ShadesController::setMotorController(StepperMotorController& motorController)
+{
+    this -> motorController = motorController;
+}
+
+void ToyController::ShadesController::changeMode(char* modeToSet)
+{
+    strcmp(modeToSet, "1") != 0? close() : open();
+}
+
+void ToyController::ShadesController::open()
 {
 
     for (uint16_t i = 0; i < 200; ++i) {
@@ -17,7 +27,7 @@ void PhysicalToyController::ShadesController::open(StepperMotorController& motor
     motorController.setCurrPos(OPEN);
 }
 
-void PhysicalToyController::ShadesController::close(StepperMotorController& motorController)
+void ToyController::ShadesController::close()
 {
     for (int i = 0; i < 20; ++i) {
         motorController.setDelayBetweenSteps(3);

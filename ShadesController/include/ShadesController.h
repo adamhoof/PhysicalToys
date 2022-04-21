@@ -7,15 +7,21 @@
 #define OPEN 1
 #define CLOSE 0
 
-namespace PhysicalToyController
+namespace ToyController
 {
     class ShadesController
     {
     public:
         ShadesController();
 
-        void open(StepperMotorController& motorController);
+        StepperMotorController motorController;
 
-        void close(StepperMotorController& motorController);
+        void setMotorController(StepperMotorController& motorController);
+
+        void changeMode(char* modeToSet);
+
+        void open();
+
+        void close();
     };
 }

@@ -11,7 +11,7 @@ MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
 
 StepperMotorController stepperMotorController {};
-PhysicalToyController::ShadesController shadesController {};
+ToyController::ShadesController shadesController {};
 
 void OTACapability(void* params)
 {
@@ -27,35 +27,17 @@ void OTACapability(void* params)
     }
 }
 
+char payloadToSend[10];
+bool receivedChangeModeRequest = false;
+
 void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
-    if (mqttClientHandler.isFirstMessageAfterBoot) {
-
-        for (int i = 0; i < 250; ++i) {
-            stepperMotorController.stepperMotor.clockwiseStep();
-            if (!digitalRead(32)) {
-                break;
-            }
-        }
-
-        bool switchNotPresent = digitalRead(32);
-
-        for (int i = 0; i < 250; ++i) {
-            stepperMotorController.stepperMotor.antiClockwiseStep();
-        }
-
-        uint8_t posToSet;
-        switchNotPresent ? posToSet = OPEN : posToSet = CLOSE;
-
-        mqttClientHandler.publish(String(posToSet) + " " + String(mqttClientHandler.isFirstMessageAfterBoot));
-
-        stepperMotorController.setCurrPos(posToSet);
-        stepperMotorController.setReqPos(posToSet);
-
-        mqttClientHandler.isFirstMessageAfterBoot = false;
-        return;
+    for (int i = 0; i < length; i++) {
+        payloadToSend[i] = char(payload[i]);
     }
-    stepperMotorController.setReqPosFromString(payload);
+    payloadToSend[length] = '\0';
+
+    receivedChangeModeRequest = true;
 }
 
 void setup()
@@ -66,6 +48,7 @@ void setup()
 
     stepperMotorController.setupPins(18, 19, 21, 22);
     stepperMotorController.setDelayBetweenSteps(3);
+    shadesController.setMotorController(stepperMotorController);
 
     wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
     wifiController.connect();
@@ -94,6 +77,11 @@ void loop()
     mqttClientHandler.maintainConnection();
     delay(10);
 
+    if (receivedChangeModeRequest) {
+        shadesController.changeMode(payloadToSend);
+        mqttClientHandler.publish(payloadToSend);
+        receivedChangeModeRequest = false;
+    }
     if (POSITIONS_EQUAL) {
         delay(10);
         return;
