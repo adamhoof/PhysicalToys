@@ -2,14 +2,11 @@
 
 #include "StepperMotor.h"
 
-#define POSITIONS_EQUAL stepperMotorController.getReqPos() == stepperMotorController.getCurrPos()
-#define REQ_POS_GREATER_THAN_CURR stepperMotorController.getReqPos() > stepperMotorController.getCurrPos()
+#define CLOCKWISE 1
+#define ANTI_CLOCKWISE 0
 
 class StepperMotorController
 {
-public:
-    uint8_t currPos;
-    uint8_t reqPos;
 public:
     StepperMotorController();
 
@@ -19,17 +16,9 @@ public:
 
     void setDelayBetweenSteps(uint8_t stepDelay);
 
-    uint8_t getCurrPos();
+    void moveByStepAmount(uint8_t dir, uint32_t amountOfSteps);
 
-    void setCurrPos(uint8_t pos);
+    void moveClockwise();
 
-    void setReqPos(uint8_t pos);
-
-    uint8_t getReqPos();
-
-    void setReqPosFromString(String& receivedPos);
-
-    void setCurrPosFromString(String& receivedPos);
-
-    void leaveSwitchAlone();
+    void moveAntiClockwise();
 };

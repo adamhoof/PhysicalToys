@@ -1,11 +1,13 @@
 #pragma once
 
-#include "WifiController.h"
-#include "MQTTClientHandler.h"
 #include "StepperMotorController.h"
+#include "OpenCloseSwitchesTracker.h"
 
-#define OPEN 1
-#define CLOSE 0
+#define OPEN_SWITCH 33
+#define CLOSE_SWITCH 32
+
+#define OPEN_SWITCH_NOT_PRESSED digitalRead(OPEN_SWITCH)
+#define CLOSE_SWITCH_NOT_PRESSED digitalRead(CLOSE_SWITCH)
 
 namespace ToyController
 {
@@ -14,7 +16,10 @@ namespace ToyController
     public:
         ShadesController();
 
-        StepperMotorController motorController;
+        StepperMotorController motorController{};
+
+        char currentMode[10];
+        char requiredMode[10];
 
         void setMotorController(StepperMotorController& motorController);
 

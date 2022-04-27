@@ -1,8 +1,6 @@
 #include "StepperMotorController.h"
 
-StepperMotorController::StepperMotorController()
-        : currPos(0), reqPos(0)
-{}
+StepperMotorController::StepperMotorController() = default;
 
 void StepperMotorController::setupPins(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4)
 {
@@ -17,43 +15,39 @@ void StepperMotorController::setupPins(uint8_t in1, uint8_t in2, uint8_t in3, ui
     pinMode(stepperMotor.pin4, OUTPUT);
 }
 
-void StepperMotorController::setReqPosFromString(String& receivedPos)
-{
-    reqPos = receivedPos.toInt();
-}
-
-void StepperMotorController::setCurrPosFromString(String& receivedPos)
-{
-    currPos = receivedPos.toInt();
-}
-
-uint8_t StepperMotorController::getCurrPos()
-{
-    return currPos;
-}
-
-void StepperMotorController::setCurrPos(uint8_t pos)
-{
-    currPos = pos;
-}
-
-void StepperMotorController::setReqPos(uint8_t pos) {
-    reqPos = pos;
-}
-
-uint8_t StepperMotorController::getReqPos()
-{
-    return reqPos;
-}
-
-void StepperMotorController::leaveSwitchAlone()
-{
-    for (int i = 0; i < 100; ++i) {
-        stepperMotor.antiClockwiseStep();
-    }
-}
-
 void StepperMotorController::setDelayBetweenSteps(uint8_t stepDelay)
 {
+    if (stepperMotor.delayBetweenSteps == stepDelay) {
+        return;
+    }
     stepperMotor.delayBetweenSteps = stepDelay;
+}
+
+
+void StepperMotorController::moveClockwise()
+{
+    stepperMotor.clockwiseStep();
+}
+
+void StepperMotorController::moveAntiClockwise()
+{
+    stepperMotor.antiClockwiseStep();
+}
+
+void StepperMotorController::moveByStepAmount(uint8_t dir, uint32_t amountOfSteps)
+{
+    switch (dir) {
+        case CLOCKWISE:
+            for (int i = 0; i < amountOfSteps; ++i) {
+                stepperMotor.clockwiseStep();
+            }
+            break;
+        case ANTI_CLOCKWISE:
+            for (int i = 0; i < amountOfSteps; ++i) {
+                stepperMotor.antiClockwiseStep();
+            }
+            break;
+        default:
+            break;
+    }
 }

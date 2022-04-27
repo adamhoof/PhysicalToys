@@ -6,7 +6,6 @@
 #include <MQTTClientHandler.h>
 #include <OTAHandler.h>
 
-
 MQTTClientHandler mqttClientHandler {};
 WifiController wifiController {};
 
@@ -44,7 +43,8 @@ void setup()
 {
     btStop();
 
-    pinMode(32, INPUT_PULLUP);
+    pinMode(OPEN_SWITCH, INPUT_PULLUP);
+    pinMode(CLOSE_SWITCH, INPUT_PULLUP);
 
     stepperMotorController.setupPins(18, 19, 21, 22);
     stepperMotorController.setDelayBetweenSteps(3);
@@ -82,19 +82,4 @@ void loop()
         mqttClientHandler.publish(payloadToSend);
         receivedChangeModeRequest = false;
     }
-    if (POSITIONS_EQUAL) {
-        delay(10);
-        return;
-    }
-
-    String status {};
-    stepperMotorController.getReqPos() == OPEN ? status = "opening" : status = "closing";
-
-    mqttClientHandler.publish(status);
-
-    REQ_POS_GREATER_THAN_CURR ? shadesController.open(stepperMotorController)
-                              : shadesController.close(stepperMotorController);
-
-    status == "opening" ? status = "open" : status = "close";
-    mqttClientHandler.publish(status);
 }
