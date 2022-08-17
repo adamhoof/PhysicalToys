@@ -13,7 +13,7 @@ PubSubClient mqttClient = PubSubClient();
 OfficeLampController officeLampController {};
 IRsend irSend = IRsend(25);
 
-char payloadToSend[10];
+char modeToSet[10];
 bool receivedChangeModeRequest = false;
 
 void KeepOTAAlive(void* params)
@@ -30,9 +30,9 @@ void KeepOTAAlive(void* params)
 void messageHandler(char* topic, const byte* payload, unsigned int length)
 {
     for (int i = 0; i < length; i++) {
-        payloadToSend[i] = char(payload[i]);
+        modeToSet[i] = char(payload[i]);
     }
-    payloadToSend[length] = '\0';
+    modeToSet[length] = '\0';
 
     receivedChangeModeRequest = true;
 }
@@ -45,7 +45,7 @@ void setup()
 
     irSend.begin();
 
-    wifiController.setHostname(hostname).setSSID(wifiSSID).setPassword(wifiPassword);
+    wifiController.setHostname(hostname).setSSID(wiFiSSID).setPassword(wiFiPassword);
     wifiController.connect();
 
     xTaskCreatePinnedToCore(
@@ -58,7 +58,7 @@ void setup()
             CONFIG_ARDUINO_RUNNING_CORE
     );
 
-    mqttClient.setServer(server, port);
+    mqttClient.setServer(mqttServer, mqttPort);;
     mqttClient.setClient(wifiClient);
     mqttClient.connect(hostname);
     mqttClient.subscribe(subscribeTopic);
@@ -68,14 +68,15 @@ void setup()
 void loop()
 {
     wifiController.maintainConnection();
+
     if (!mqttClient.loop()) {
         mqttClient.connect(hostname);
     }
-    delay(10);
 
     if (receivedChangeModeRequest) {
-        officeLampController.changeMode(&irSend, payloadToSend);
-        mqttClient.publish(publishTopic, payloadToSend, true);
+        officeLampController.changeMode(&irSend, modeToSet);
+        mqttClient.publish(publishTopic, modeToSet, true);
         receivedChangeModeRequest = false;
     }
+    delay(10);
 }
