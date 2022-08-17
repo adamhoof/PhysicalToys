@@ -2,27 +2,27 @@
 #include "OfficeLampController.h"
 #include "credentials.h"
 #include <WifiController.h>
-#include <MQTTClientHandler.h>
+#include <PubSubClient.h>
 #include <OTAHandler.h>
 
-MQTTClientHandler mqttClientHandler {};
-WifiController wifiController {};
+WifiController wifiController = WifiController();
+WiFiClient wifiClient = WiFiClient();
 
-ApplianceController::OfficeLampController officeLampController {};
+PubSubClient mqttClient = PubSubClient();
+
+OfficeLampController officeLampController {};
+IRsend irSend = IRsend(25);
 
 char payloadToSend[10];
 bool receivedChangeModeRequest = false;
 
-void OTACapability(void* params)
+void KeepOTAAlive(void* params)
 {
-    OTAHandler otaHandler {};
-
-    otaHandler.setEvents();
-    otaHandler.init();
-    delay(10);
+    OTAHandler::setEvents();
+    OTAHandler::init();
 
     for (;;) {
-        otaHandler.maintainConnection();
+        OTAHandler::maintainConnection();
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
@@ -41,40 +41,41 @@ void setup()
 {
     btStop();
 
-    officeLampController.init();
-
     Serial.begin(115200);
 
-    wifiController.setHostname(host).setSSID(wifiSSID).setPassword(wifiPassword);
-    wifiController.connect();
-    wifiController.setCertificates(CA_CERT, CLIENT_CERT, CLIENT_KEY);
+    irSend.begin();
 
-    mqttClientHandler.setHostname(host).setServerAndPort(server, port);
-    mqttClientHandler.setWiFiClient(wifiController.wiFiClientSecure());
-    mqttClientHandler.setSubscribeTopic(sub).setPublishTopic(pub);
-    mqttClientHandler.connectAndSubscribe();
-    mqttClientHandler.setCallback(messageHandler);
+    wifiController.setHostname(hostname).setSSID(wifiSSID).setPassword(wifiPassword);
+    wifiController.connect();
 
     xTaskCreatePinnedToCore(
-            OTACapability,
-            "OTACapability",
+            KeepOTAAlive,
+            "KeepOTAAlive",
             3500,
             nullptr,
             2,
             nullptr,
             CONFIG_ARDUINO_RUNNING_CORE
     );
+
+    mqttClient.setServer(server, port);
+    mqttClient.setClient(wifiClient);
+    mqttClient.connect(hostname);
+    mqttClient.subscribe(subscribeTopic);
+    mqttClient.setCallback(messageHandler);
 }
 
 void loop()
 {
     wifiController.maintainConnection();
-    mqttClientHandler.maintainConnection();
+    if (!mqttClient.loop()) {
+        mqttClient.connect(hostname);
+    }
     delay(10);
 
-    if (receivedChangeModeRequest){
-        officeLampController.changeMode(payloadToSend);
-        mqttClientHandler.publish(payloadToSend);
+    if (receivedChangeModeRequest) {
+        officeLampController.changeMode(&irSend, payloadToSend);
+        mqttClient.publish(publishTopic, payloadToSend, true);
         receivedChangeModeRequest = false;
     }
 }

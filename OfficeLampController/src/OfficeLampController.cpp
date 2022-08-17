@@ -1,15 +1,13 @@
 #include "OfficeLampController.h"
 
-ApplianceController::OfficeLampController::OfficeLampController() :
-        currentMode {nullptr}
-{}
+OfficeLampController::OfficeLampController() = default;
 
-void ApplianceController::OfficeLampController::init()
+void OfficeLampController::changeMode(IRsend* irCodeSender, char* modeToSet)
 {
-    officeLamp.irCodeSender.setup();
-}
-
-void ApplianceController::OfficeLampController::changeMode(char* modeToSet)
-{
-    strcmp(modeToSet, "off") != 0 ? officeLamp.mode(availableModes[modeToSet]) : officeLamp.off();
+    if (strcmp(modeToSet, "off") == 0) {
+        irCodeSender->sendNEC(modes["off"]);
+        return;
+    }
+    irCodeSender->sendNEC(modes["on"]);
+    irCodeSender->sendNEC(modes[modeToSet]);
 }

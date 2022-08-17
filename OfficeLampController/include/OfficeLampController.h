@@ -1,16 +1,14 @@
 #pragma once
 
-#include "OfficeLamp.h"
+#include <IRsend.h>
 #include <map>
+#include <cstring>
 
-namespace ApplianceController
-{
     class OfficeLampController
     {
     private:
-        char* currentMode;
-
-        std::map<const std::string, const uint32_t> availableModes = {
+        std::map<const std::string, const uint32_t> modes = {
+                {"on", 0x00F7C03F },
                 {"white", 0x00F7E01F },
                 {"yellow", 0x00F728D7 },
                 {"blue", 0x00F7609F },
@@ -22,10 +20,5 @@ namespace ApplianceController
     public:
         OfficeLampController();
 
-        PhysicalToy::OfficeLamp officeLamp {};
-
-        void init();
-
-        void changeMode(char* modeToSet);
+        void changeMode(IRsend* irCodeSender, char* modeToSet);
     };
-}
