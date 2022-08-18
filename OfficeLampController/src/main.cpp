@@ -4,6 +4,7 @@
 #include <WifiController.h>
 #include <PubSubClient.h>
 #include <OTAHandler.h>
+#include <ArduinoJson.h>
 
 WifiController wifiController = WifiController();
 WiFiClient wifiClient = WiFiClient();
@@ -63,6 +64,22 @@ void setup()
     mqttClient.connect(hostname);
     mqttClient.subscribe(subscribeTopic);
     mqttClient.setCallback(messageHandler);
+
+    StaticJsonDocument<256> toyInfo;
+    toyInfo["name"] = hostname;
+    toyInfo["ip"] = WiFi.localIP().toString();
+    JsonArray modes = toyInfo.createNestedArray("availableModes");
+
+    for (std::pair<std::basic_string<char>, uint32_t> pair: officeLampController.modes) {
+        modes.add(pair.first);
+    }
+    toyInfo["publishTopic"] = publishTopic;
+    toyInfo["subscribeTopic"] = subscribeTopic;
+
+    byte serializedToyInfo[256];
+    size_t size = serializeJson(toyInfo, serializedToyInfo);
+
+    mqttClient.publish(bootTopic, serializedToyInfo, size, true);
 }
 
 void loop()
@@ -78,5 +95,6 @@ void loop()
         mqttClient.publish(publishTopic, modeToSet, true);
         receivedChangeModeRequest = false;
     }
+
     delay(10);
 }

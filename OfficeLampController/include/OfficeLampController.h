@@ -6,7 +6,7 @@
 
     class OfficeLampController
     {
-    private:
+    public:
         std::map<const std::string, const uint32_t> modes = {
                 {"on", 0x00F7C03F },
                 {"white", 0x00F7E01F },
