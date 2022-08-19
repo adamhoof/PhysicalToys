@@ -65,7 +65,7 @@ void setup()
     mqttClient.subscribe(subscribeTopic);
     mqttClient.setCallback(messageHandler);
 
-    StaticJsonDocument<256> toyInfo;
+    StaticJsonDocument<300> toyInfo;
     toyInfo["name"] = hostname;
     toyInfo["ip"] = WiFi.localIP().toString();
     JsonArray modes = toyInfo.createNestedArray("availableModes");
@@ -76,7 +76,7 @@ void setup()
     toyInfo["publishTopic"] = publishTopic;
     toyInfo["subscribeTopic"] = subscribeTopic;
 
-    byte serializedToyInfo[256];
+    byte serializedToyInfo[300];
     size_t size = serializeJson(toyInfo, serializedToyInfo);
 
     mqttClient.publish(bootTopic, serializedToyInfo, size, true);
